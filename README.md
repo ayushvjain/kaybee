@@ -62,6 +62,27 @@ needed). In production it commits to GitHub instead. That switch is automatic.
 | `npm run preview` | Serve the production build on the Cloudflare runtime locally |
 | `npm run check` | TypeScript and Astro diagnostics |
 
+### Two things about the dev setup that look odd but are deliberate
+
+Both are worked around already — this is just so the next person does not
+"simplify" them back into bugs.
+
+**1. The dev server uses the Node adapter, not the Cloudflare one.**
+See the comment in `astro.config.mjs`. The Cloudflare adapter runs on-demand
+routes inside `workerd` during `astro dev`, and Keystatic's API module is
+CommonJS, which `workerd` rejects outright with `exports is not defined`. The
+result is a completely dead admin at `/keystatic` in development. Builds and
+`npm run preview` still use the Cloudflare adapter, so what ships is unchanged —
+only `astro dev` takes the Node branch.
+
+**2. `npm run dev` goes through `scripts/dev.mjs` instead of calling `astro dev`.**
+Astro 7 daemonises the dev server and allows it a hardcoded 30 seconds to become
+ready. Keystatic's dependency graph is large enough that Vite's first cold
+pre-bundle can exceed that, and the watchdog then kills a server that was
+starting normally, reporting `Dev server failed to start within 30s`. The wrapper
+runs it in the foreground instead, where no watchdog applies. Stop it with
+Ctrl+C as usual.
+
 ---
 
 ## Setup required before going live
