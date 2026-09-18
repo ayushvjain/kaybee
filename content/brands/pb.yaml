@@ -1,0 +1,8 @@
+name: PB
+order: 9
+relationship: stocked
+ranges:
+  - Adapter Sleeves
+  - Withdrawal Sleeves
+blurb: Stocked for adapter and withdrawal sleeve requirements.
+logo: null

@@ -1,0 +1,236 @@
+---
+import { getCompany, getProducts, telHref, whatsappHref } from '../lib/content';
+
+const company = await getCompany();
+const products = await getProducts();
+const year = new Date().getFullYear();
+---
+
+<footer class="ftr">
+  <div class="kb-container ftr__top">
+    <div class="ftr__brand">
+      <img
+        class="ftr__logo"
+        src="/brand/kaybee-logo-horizontal.svg"
+        alt="Kaybee International"
+        width="172"
+        height="53"
+      />
+      {company.tagline && <p class="ftr__tagline">{company.tagline}</p>}
+    </div>
+
+    <div class="ftr__col">
+      <h2 class="ftr__heading">Products</h2>
+      <ul class="ftr__list">
+        {
+          products.map((p) => (
+            <li>
+              <a href={`/products/${p.slug}`}>{p.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="ftr__col">
+      <h2 class="ftr__heading">Company</h2>
+      <ul class="ftr__list">
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/brands">Brands</a></li>
+        <li><a href="/size-reference">Size Reference</a></li>
+        <li><a href="/downloads">Downloads</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </div>
+
+    <div class="ftr__col ftr__col--contact">
+      <h2 class="ftr__heading">Get in touch</h2>
+
+      {
+        company.addressLines.length > 0 && (
+          <address class="ftr__address">
+            {company.addressLines.map((line) => (
+              <span>{line}</span>
+            ))}
+            <span>
+              {[company.city, company.pincode].filter(Boolean).join(' ')}
+              {company.state ? `, ${company.state}` : ''}
+            </span>
+          </address>
+        )
+      }
+
+      <ul class="ftr__list ftr__list--contact">
+        {
+          company.landlines.map((num) => (
+            <li>
+              <a href={telHref(num)}>{num}</a>
+            </li>
+          ))
+        }
+        {
+          company.mobile && (
+            <li>
+              <a href={telHref(company.mobile)}>{company.mobile}</a>
+              <a
+                class="ftr__wa"
+                href={whatsappHref(company.mobile, 'Hello Kaybee International, I have an enquiry.')}
+                target="_blank"
+                rel="noopener"
+              >
+                WhatsApp
+              </a>
+            </li>
+          )
+        }
+        {
+          company.email && (
+            <li>
+              <a href={`mailto:${company.email}`}>{company.email}</a>
+            </li>
+          )
+        }
+      </ul>
+
+      {company.hours && <p class="ftr__hours">{company.hours}</p>}
+    </div>
+  </div>
+
+  <div class="ftr__bottom">
+    <div class="kb-container ftr__bottom-inner">
+      <p>&copy; {year} {company.legalName}. All rights reserved.</p>
+      <p class="ftr__built">Bearing accessories &middot; Chennai, Tamil Nadu, India</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    background: var(--kb-blue-deeper);
+    color: color-mix(in srgb, var(--kb-white) 78%, transparent);
+    font-size: var(--kb-text-sm);
+  }
+
+  .ftr__top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+    gap: var(--kb-space-7) var(--kb-space-6);
+    padding-block: var(--kb-space-8) var(--kb-space-7);
+  }
+
+  .ftr__logo {
+    height: 52px;
+    width: auto;
+    /* The lockup is dark ink on white; invert to sit on the deep blue ground. */
+    filter: brightness(0) invert(1);
+    opacity: 0.95;
+  }
+
+  .ftr__tagline {
+    margin-top: var(--kb-space-4);
+    max-width: 34ch;
+    line-height: 1.6;
+  }
+
+  .ftr__heading {
+    font-size: var(--kb-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--kb-cyan);
+    margin-bottom: var(--kb-space-4);
+  }
+
+  .ftr__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  .ftr__list a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ftr__list a:hover {
+    color: var(--kb-white);
+    text-decoration: underline;
+    text-decoration-color: var(--kb-cyan);
+  }
+
+  .ftr__list--contact {
+    gap: 0.4rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ftr__list--contact li {
+    display: flex;
+    align-items: center;
+    gap: var(--kb-space-3);
+    flex-wrap: wrap;
+  }
+
+  .ftr__wa {
+    font-size: var(--kb-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kb-cyan) !important;
+    border: 1px solid color-mix(in srgb, var(--kb-cyan) 45%, transparent);
+    border-radius: 100px;
+    padding: 0.1rem 0.55rem;
+    text-decoration: none !important;
+  }
+
+  .ftr__wa:hover {
+    background: color-mix(in srgb, var(--kb-cyan) 16%, transparent);
+  }
+
+  .ftr__address {
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+    line-height: 1.55;
+    margin-bottom: var(--kb-space-4);
+  }
+
+  .ftr__hours {
+    margin-top: var(--kb-space-4);
+    font-size: var(--kb-text-xs);
+    color: color-mix(in srgb, var(--kb-white) 58%, transparent);
+  }
+
+  .ftr__bottom {
+    border-top: 1px solid color-mix(in srgb, var(--kb-white) 12%, transparent);
+  }
+
+  .ftr__bottom-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--kb-space-4);
+    flex-wrap: wrap;
+    padding-block: var(--kb-space-4);
+    font-size: var(--kb-text-xs);
+    color: color-mix(in srgb, var(--kb-white) 58%, transparent);
+  }
+
+  @media (max-width: 900px) {
+    .ftr__top {
+      grid-template-columns: 1fr 1fr;
+    }
+    .ftr__brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .ftr__top {
+      grid-template-columns: 1fr;
+      gap: var(--kb-space-6);
+    }
+  }
+</style>

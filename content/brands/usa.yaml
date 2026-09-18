@@ -1,0 +1,7 @@
+name: USA
+order: 4
+relationship: authorised-distributor
+ranges:
+  - Plummer Blocks
+blurb: Authorised distribution of USA brand plummer block housings.
+logo: null

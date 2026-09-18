@@ -1,0 +1,7 @@
+name: AEC
+order: 3
+relationship: authorised-distributor
+ranges:
+  - Plummer Blocks
+blurb: Authorised distribution of AEC plummer block housings.
+logo: null

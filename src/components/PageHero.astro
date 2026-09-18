@@ -1,0 +1,101 @@
+---
+import Watermark from './Watermark.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  /** Breadcrumb trail, excluding Home and the current page. */
+  crumbs?: { href: string; label: string }[];
+}
+
+const { eyebrow, title, lede, crumbs = [] } = Astro.props;
+---
+
+<section class="phero">
+  <Watermark position="right" size="440px" tone="light" />
+  <div class="kb-container phero__inner">
+    <nav class="phero__crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        {
+          crumbs.map((c) => (
+            <li>
+              <a href={c.href}>{c.label}</a>
+            </li>
+          ))
+        }
+        <li aria-current="page">{title}</li>
+      </ol>
+    </nav>
+
+    {eyebrow && <p class="kb-eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    {lede && <p class="phero__lede">{lede}</p>}
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative;
+    background: var(--kb-gradient-deep);
+    color: var(--kb-white);
+    overflow: hidden;
+    padding-block: clamp(2.25rem, 1.5rem + 3vw, 4rem);
+  }
+
+  .phero__inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .phero h1 {
+    color: var(--kb-white);
+    margin-top: var(--kb-space-3);
+    font-size: var(--kb-text-3xl);
+    max-width: 26ch;
+  }
+
+  .phero__lede {
+    margin-top: var(--kb-space-4);
+    max-width: 62ch;
+    font-size: var(--kb-text-lg);
+    color: color-mix(in srgb, var(--kb-white) 84%, transparent);
+  }
+
+  .phero__crumbs {
+    margin-bottom: var(--kb-space-4);
+    font-size: var(--kb-text-xs);
+  }
+
+  .phero__crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: color-mix(in srgb, var(--kb-white) 62%, transparent);
+  }
+
+  .phero__crumbs li + li::before {
+    content: '/';
+    margin-right: 0.4rem;
+    color: color-mix(in srgb, var(--kb-white) 38%, transparent);
+  }
+
+  .phero__crumbs a {
+    color: color-mix(in srgb, var(--kb-white) 80%, transparent);
+    text-decoration: none;
+  }
+
+  .phero__crumbs a:hover {
+    color: var(--kb-white);
+    text-decoration: underline;
+  }
+
+  .phero__crumbs [aria-current='page'] {
+    color: var(--kb-cyan);
+  }
+</style>

@@ -1,0 +1,320 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import Watermark from '../components/Watermark.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getAbout, getBrands, getHomepage, RELATIONSHIP_LABEL } from '../lib/content';
+
+const about = await getAbout();
+const brands = await getBrands();
+const home = await getHomepage();
+
+const distributors = brands.filter((b) => b.relationship === 'authorised-distributor');
+const otherBrands = brands.filter(
+  (b) => b.relationship === 'partner' || b.relationship === 'stocked'
+);
+---
+
+<BaseLayout
+  title="About Us"
+  description="For over five decades Kaybee International has supplied bearing accessories to industrial manufacturers, OEMs and dealers across India from its base in Chennai."
+>
+  <PageHero
+    eyebrow="Since 1975"
+    title={about.heading}
+    lede="A trusted name in bearing accessories, serving industrial manufacturers, OEMs and dealers across India."
+  />
+
+  <!-- ---------- intro ---------- -->
+  <section class="kb-section">
+    <Watermark position="right" size="400px" tone="paper" />
+    <div class="kb-container kb-container--narrow">
+      {about.introHtml && <div class="kb-prose intro" set:html={about.introHtml} />}
+    </div>
+  </section>
+
+  <!-- ---------- history ---------- -->
+  {
+    about.history && (
+      <section class="kb-section kb-section--paper">
+        <div class="kb-container split">
+          <div>
+            <SectionLabel num="01" text="Our history" />
+            <h2>{about.historyHeading}</h2>
+          </div>
+          <div class="split__body">
+            <p>{about.history}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ---------- distributor table ---------- -->
+  <section class="kb-section">
+    <div class="kb-container">
+      <div class="kb-head">
+        <SectionLabel num="02" text="Authorised distribution" />
+        <h2>Authorised distributors for {distributors.length} established brands</h2>
+        <p class="kb-head__lede">
+          Each of these relationships is direct, which is what lets us hold genuine stock and give
+          you a straight answer on availability.
+        </p>
+      </div>
+
+      <div class="dtab__scroll" tabindex="0" role="region" aria-label="Authorised distribution table">
+        <table class="dtab">
+          <thead>
+            <tr>
+              <th scope="col">Brand</th>
+              <th scope="col">Product range</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              distributors.map((b) => (
+                <tr>
+                  <th scope="row">{b.name}</th>
+                  <td>{b.ranges.join(', ')}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      {
+        otherBrands.length > 0 && (
+          <div class="also">
+            <h3>Also supplied</h3>
+            <ul>
+              {otherBrands.map((b) => (
+                <li>
+                  <strong>{b.name}</strong>
+                  <span>{RELATIONSHIP_LABEL[b.relationship]}</span>
+                  <span class="also__ranges">{b.ranges.join(', ')}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <a class="kb-btn kb-btn--ghost dtab__link" href="/brands">See all brands in detail</a>
+    </div>
+  </section>
+
+  <!-- ---------- custom capability ---------- -->
+  {
+    about.custom && (
+      <section class="kb-section kb-section--tint">
+        <Watermark position="bottom-left" size="420px" tone="blue" />
+        <div class="kb-container split">
+          <div>
+            <SectionLabel num="03" text="Custom work" />
+            <h2>{about.customHeading}</h2>
+          </div>
+          <div class="split__body">
+            <p>{about.custom}</p>
+            <a class="kb-btn kb-btn--primary" href="/contact#enquiry">
+              Discuss a non-standard size
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ---------- why us ---------- -->
+  {
+    home.whyUs.length > 0 && (
+      <section class="kb-section">
+        <div class="kb-container">
+          <div class="kb-head">
+            <SectionLabel num="04" text="Why Kaybee" />
+            <h2>What you get by ordering from us</h2>
+          </div>
+          <dl class="pts">
+            {home.whyUs.map((item) => (
+              <div class="pts__item">
+                <dt>{item.heading}</dt>
+                <dd>{item.body}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .intro {
+    font-size: var(--kb-text-lg);
+    color: var(--kb-text-muted);
+  }
+
+  .intro :global(p) {
+    line-height: 1.75;
+  }
+
+  .intro :global(p:first-child) {
+    font-size: var(--kb-text-xl);
+    color: var(--kb-ink);
+    font-weight: 450;
+  }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: var(--kb-space-7);
+    align-items: start;
+  }
+
+  .split__body p {
+    color: var(--kb-text-muted);
+    font-size: var(--kb-text-lg);
+    line-height: 1.7;
+    max-width: 60ch;
+  }
+
+  .split__body .kb-btn {
+    margin-top: var(--kb-space-5);
+  }
+
+  /* ---- distributor table ---- */
+  .dtab__scroll {
+    overflow-x: auto;
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+    background: var(--kb-white);
+  }
+
+  .dtab {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--kb-text-sm);
+  }
+
+  .dtab thead th {
+    background: var(--kb-blue-deeper);
+    color: var(--kb-white);
+    text-align: left;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+  }
+
+  .dtab tbody th {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--kb-grey-100);
+    font-weight: 750;
+    color: var(--kb-blue);
+    white-space: nowrap;
+    width: 1%;
+  }
+
+  .dtab td {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--kb-grey-100);
+    color: var(--kb-text-muted);
+  }
+
+  .dtab tbody tr:nth-child(even) th,
+  .dtab tbody tr:nth-child(even) td {
+    background: var(--kb-grey-50);
+  }
+
+  .dtab__link {
+    margin-top: var(--kb-space-6);
+  }
+
+  /* ---- also supplied ---- */
+  .also {
+    margin-top: var(--kb-space-6);
+  }
+
+  .also h3 {
+    font-size: var(--kb-text-xs);
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kb-text-subtle);
+    margin-bottom: var(--kb-space-4);
+  }
+
+  .also ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: var(--kb-space-4);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .also li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: var(--kb-space-4);
+    background: var(--kb-grey-50);
+    border-radius: var(--kb-radius);
+    border-left: 3px solid var(--kb-grey-300);
+  }
+
+  .also strong {
+    font-size: var(--kb-text-base);
+    font-weight: 750;
+    color: var(--kb-blue);
+  }
+
+  .also li > span:nth-of-type(1) {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--kb-text-subtle);
+  }
+
+  .also__ranges {
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ---- why points ---- */
+  .pts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: var(--kb-space-5) var(--kb-space-6);
+    margin: 0;
+  }
+
+  .pts__item {
+    padding-top: var(--kb-space-4);
+    border-top: 2px solid var(--kb-paper);
+  }
+
+  .pts dt {
+    font-weight: 650;
+    color: var(--kb-ink);
+    margin-bottom: var(--kb-space-2);
+  }
+
+  .pts dd {
+    margin: 0;
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 860px) {
+    .split {
+      grid-template-columns: 1fr;
+      gap: var(--kb-space-5);
+    }
+  }
+</style>

@@ -1,0 +1,190 @@
+---
+interface Row {
+  series: string;
+  note: string;
+  available: string[];
+}
+
+interface Props {
+  shaftSizes: string[];
+  rows: Row[];
+}
+
+const { shaftSizes, rows } = Astro.props;
+---
+
+<div class="matrix">
+  <div class="matrix__scroll" tabindex="0" role="region" aria-label="Series and shaft size table">
+    <table class="matrix__table">
+      <caption class="kb-visually-hidden">
+        Plummer block series against shaft sizes. A tick means Kaybee International holds that
+        combination as ready stock.
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col" class="matrix__corner">Series</th>
+          {
+            shaftSizes.map((size) => (
+              <th scope="col" class="matrix__size">
+                {size}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              <th scope="row" class="matrix__series">
+                <span class="matrix__series-name">{row.series}</span>
+                {row.note && <span class="matrix__series-note">{row.note}</span>}
+              </th>
+              {shaftSizes.map((size) => {
+                const has = row.available.includes(size);
+                return (
+                  <td class:list={['matrix__cell', has && 'is-yes']}>
+                    {has ? (
+                      <>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path
+                            d="m5 13 4 4L19 7"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        <span class="kb-visually-hidden">
+                          {row.series} available in {size}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span aria-hidden="true" class="matrix__dash">&mdash;</span>
+                        <span class="kb-visually-hidden">
+                          {row.series} not stocked in {size}, enquire
+                        </span>
+                      </>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="matrix__hint">Scroll the table sideways to see all shaft sizes.</p>
+</div>
+
+<style>
+  .matrix {
+    margin-block: var(--kb-space-6);
+  }
+
+  .matrix__scroll {
+    overflow-x: auto;
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+    background: var(--kb-white);
+  }
+
+  .matrix__scroll:focus-visible {
+    outline: 2px solid var(--kb-blue);
+    outline-offset: 2px;
+  }
+
+  .matrix__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--kb-text-sm);
+  }
+
+  .matrix__corner,
+  .matrix__size {
+    background: var(--kb-blue-deeper);
+    color: var(--kb-white);
+    font-weight: 600;
+    text-align: center;
+    padding: 0.7rem 0.6rem;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .matrix__corner {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    min-width: 132px;
+  }
+
+  .matrix__series {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--kb-white);
+    border-right: 1px solid var(--kb-grey-200);
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    min-width: 132px;
+  }
+
+  .matrix__series-name {
+    display: block;
+    font-weight: 700;
+    color: var(--kb-blue);
+  }
+
+  .matrix__series-note {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: var(--kb-text-subtle);
+    line-height: 1.35;
+  }
+
+  .matrix__cell {
+    text-align: center;
+    padding: 0.6rem 0.5rem;
+    border-top: 1px solid var(--kb-grey-100);
+    color: var(--kb-grey-300);
+  }
+
+  .matrix__cell svg {
+    display: inline-block;
+  }
+
+  .matrix__cell.is-yes {
+    color: var(--kb-blue);
+    background: color-mix(in srgb, var(--kb-cyan) 7%, transparent);
+  }
+
+  .matrix__dash {
+    font-size: var(--kb-text-xs);
+  }
+
+  tbody tr:nth-child(even) .matrix__series {
+    background: var(--kb-grey-50);
+  }
+
+  tbody tr:nth-child(even) .matrix__cell:not(.is-yes) {
+    background: var(--kb-grey-50);
+  }
+
+  .matrix__hint {
+    display: none;
+    margin-top: var(--kb-space-3);
+    font-size: var(--kb-text-xs);
+    color: var(--kb-text-subtle);
+  }
+
+  @media (max-width: 860px) {
+    .matrix__hint {
+      display: block;
+    }
+  }
+</style>

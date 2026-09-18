@@ -1,0 +1,74 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getProducts } from '../../lib/content';
+
+const products = await getProducts();
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Bearing accessories supplied by Kaybee International',
+  itemListElement: products.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: p.name,
+    url: `https://kaybeint.com/products/${p.slug}`,
+  })),
+};
+---
+
+<BaseLayout
+  title="Products"
+  description="Plummer blocks, adapter sleeves, withdrawal sleeves, locating rings, lock nuts, lock washers and bearings, supplied from ready stock in Chennai by Kaybee International."
+  schema={schema}
+>
+  <PageHero
+    eyebrow="Our range"
+    title="Products"
+    lede="Seven ranges covering housings, sleeves and locking components. Everything here is supplied from ready stock in Chennai, with non-standard sizes made to requirement."
+  />
+
+  <section class="kb-section">
+    <div class="kb-container">
+      <div class="kb-grid kb-grid--3">
+        {products.map((product, i) => <ProductCard product={product} index={i} />)}
+      </div>
+
+      <aside class="note">
+        <h2>Looking for something not listed?</h2>
+        <p>
+          We specialise in non-standard sizes of plummer blocks and sleeves, including
+          replacement and retrofit work where the original part is no longer available. Send us
+          the dimensions and we will tell you what is possible.
+        </p>
+        <a class="kb-btn kb-btn--ghost" href="/contact#enquiry">Ask about a non-standard size</a>
+      </aside>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .note {
+    margin-top: var(--kb-space-7);
+    padding: var(--kb-space-6);
+    background: var(--kb-paper);
+    border-radius: var(--kb-radius-lg);
+    border-left: 3px solid var(--kb-cyan);
+  }
+
+  .note h2 {
+    font-size: var(--kb-text-xl);
+  }
+
+  .note p {
+    margin-top: var(--kb-space-3);
+    margin-bottom: var(--kb-space-5);
+    max-width: 62ch;
+    color: var(--kb-text-muted);
+  }
+</style>

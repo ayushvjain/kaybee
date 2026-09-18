@@ -1,0 +1,209 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import BrandCard from '../components/BrandCard.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getBrands, getProducts, RELATIONSHIP_LABEL } from '../lib/content';
+
+const brands = await getBrands();
+const products = await getProducts();
+
+const distributors = brands.filter((b) => b.relationship === 'authorised-distributor');
+
+/** Product-to-brand matrix, built from each product's brand list. */
+const matrix = products.map((p) => ({
+  name: p.name,
+  slug: p.slug,
+  brands: p.brands
+    .map((slug) => brands.find((b) => b.slug === slug)?.name)
+    .filter((n): n is string => Boolean(n)),
+}));
+---
+
+<BaseLayout
+  title="Brands"
+  description="Kaybee International is an authorised distributor for MASTA, AEC, USA, MTN, AND and GEM, sources from partner brand VARUNA, and stocks PB and SKILL bearing accessories."
+>
+  <PageHero
+    eyebrow="Our partners"
+    title="Brands we supply"
+    lede={`Authorised distribution across ${distributors.length} established brands, plus partner and stocked brands. Every label below is supplied through a direct relationship, so what you receive is genuine.`}
+  />
+
+  <section class="kb-section">
+    <div class="kb-container">
+      <div class="kb-grid kb-grid--3">
+        {brands.map((brand) => <BrandCard brand={brand} />)}
+      </div>
+
+      <p class="legend">
+        {
+          /* Only show relationship types actually in use, so the key never
+             lists a label with no card beside it. */
+          (['own', 'authorised-distributor', 'partner', 'stocked'] as const)
+            .filter((rel) => brands.some((b) => b.relationship === rel))
+            .map((rel) => (
+              <span class:list={['legend__item', `legend__item--${rel}`]}>
+                {RELATIONSHIP_LABEL[rel]}
+              </span>
+            ))
+        }
+      </p>
+    </div>
+  </section>
+
+  <section class="kb-section kb-section--paper">
+    <div class="kb-container">
+      <div class="kb-head">
+        <h2>Which brands cover which products</h2>
+        <p class="kb-head__lede">
+          If you need a specific brand for a specific range, this is the quickest way to check.
+        </p>
+      </div>
+
+      <div class="xtab__scroll" tabindex="0" role="region" aria-label="Product and brand table">
+        <table class="xtab">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Brands supplied</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              matrix.map((row) => (
+                <tr>
+                  <th scope="row">
+                    <a href={`/products/${row.slug}`}>{row.name}</a>
+                  </th>
+                  <td>
+                    {row.brands.length > 0 ? (
+                      <ul>
+                        {row.brands.map((b) => (
+                          <li>{b}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span class="xtab__none">Enquire</span>
+                    )}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Need a particular brand?"
+    body="Tell us the brand and range you are after. Where we are the authorised distributor we can supply directly from stock; where we are not, we will tell you honestly."
+  />
+</BaseLayout>
+
+<style>
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kb-space-4);
+    margin-top: var(--kb-space-6);
+    font-size: var(--kb-text-xs);
+    color: var(--kb-text-muted);
+  }
+
+  .legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .legend__item::before {
+    content: '';
+    width: 22px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--kb-grey-300);
+  }
+
+  .legend__item--own::before {
+    background: var(--kb-blue);
+  }
+  .legend__item--authorised-distributor::before {
+    background: var(--kb-cyan);
+  }
+  .legend__item--partner::before {
+    background: var(--kb-sky);
+  }
+
+  .xtab__scroll {
+    overflow-x: auto;
+    background: var(--kb-white);
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+  }
+
+  .xtab {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--kb-text-sm);
+  }
+
+  .xtab thead th {
+    background: var(--kb-blue-deeper);
+    color: var(--kb-white);
+    text-align: left;
+    font-weight: 600;
+    padding: 0.7rem 1rem;
+    white-space: nowrap;
+  }
+
+  .xtab tbody th {
+    text-align: left;
+    font-weight: 650;
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--kb-grey-100);
+    white-space: nowrap;
+  }
+
+  .xtab tbody th a {
+    text-decoration: none;
+  }
+
+  .xtab tbody th a:hover {
+    text-decoration: underline;
+  }
+
+  .xtab td {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--kb-grey-100);
+  }
+
+  .xtab td ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .xtab td li {
+    padding: 0.15rem 0.55rem;
+    background: var(--kb-blue-tint);
+    border-radius: var(--kb-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 650;
+    color: var(--kb-blue);
+  }
+
+  .xtab__none {
+    color: var(--kb-text-subtle);
+    font-style: italic;
+  }
+
+  .xtab tbody tr:nth-child(even) th,
+  .xtab tbody tr:nth-child(even) td {
+    background: var(--kb-grey-50);
+  }
+</style>

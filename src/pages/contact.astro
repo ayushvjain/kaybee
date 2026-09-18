@@ -1,0 +1,254 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import EnquiryForm from '../components/EnquiryForm.tsx';
+import { getCompany, getProducts, telHref, whatsappHref } from '../lib/content';
+
+const company = await getCompany();
+const products = await getProducts();
+
+/**
+ * Empty when unset. EnquiryForm renders a clear notice plus direct contact
+ * routes rather than a form that would silently drop enquiries.
+ */
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+
+const waHref = company.mobile
+  ? whatsappHref(company.mobile, 'Hello Kaybee International, I have an enquiry about ')
+  : '';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Contact Kaybee International, Old No. 144 Thambu Chetty Street, Chennai 600001. Phone 044-42144320, mobile +91 98401 04262, email kaybeeint@gmail.com."
+>
+  <PageHero
+    eyebrow="Get in touch"
+    title="Contact us"
+    lede="Tell us the shaft size, series or the part you are replacing. We will confirm what we hold in stock and what can be made to requirement."
+  />
+
+  <section class="kb-section">
+    <div class="kb-container contact">
+      <!-- ---------- details ---------- -->
+      <div class="contact__details">
+        <div class="block">
+          <h2 class="block__title">Visit or write to us</h2>
+          <address class="block__address">
+            <strong>{company.legalName}</strong>
+            {company.addressLines.map((l) => <span>{l}</span>)}
+            <span>
+              {[company.city, company.pincode].filter(Boolean).join(' ')}
+              {company.state ? `, ${company.state}` : ''}
+            </span>
+          </address>
+        </div>
+
+        {
+          company.landlines.length > 0 && (
+            <div class="block">
+              <h2 class="block__title">Telephone</h2>
+              <ul class="block__list">
+                {company.landlines.map((num) => (
+                  <li>
+                    <a href={telHref(num)}>{num}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          company.mobile && (
+            <div class="block">
+              <h2 class="block__title">Mobile &amp; WhatsApp</h2>
+              <ul class="block__list">
+                <li>
+                  <a href={telHref(company.mobile)}>{company.mobile}</a>
+                </li>
+              </ul>
+              <a class="wa" href={waHref} target="_blank" rel="noopener">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path
+                    d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm5.8 14.02c-.24.68-1.4 1.3-1.93 1.35-.53.05-1.03.24-3.47-.72-2.95-1.16-4.8-4.23-4.94-4.43-.14-.2-1.17-1.56-1.17-2.97 0-1.42.74-2.11 1-2.4.26-.29.57-.36.77-.36.19 0 .38 0 .55.01.18.01.41-.07.64.48.24.58.81 1.99.88 2.13.07.14.12.31.02.5-.1.2-.15.32-.29.49-.15.17-.31.39-.44.52-.14.14-.29.29-.13.58.17.29.74 1.21 1.58 1.96 1.09.97 2 1.27 2.29 1.41.28.15.45.12.62-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.65-.14.26.09 1.67.79 1.96.93.29.15.48.22.55.34.07.13.07.74-.17 1.42Z"
+                  ></path>
+                </svg>
+                Message us on WhatsApp
+              </a>
+            </div>
+          )
+        }
+
+        {
+          company.email && (
+            <div class="block">
+              <h2 class="block__title">Email</h2>
+              <ul class="block__list">
+                <li>
+                  <a href={`mailto:${company.email}`}>{company.email}</a>
+                </li>
+              </ul>
+            </div>
+          )
+        }
+
+        {
+          company.hours && (
+            <div class="block">
+              <h2 class="block__title">Business hours</h2>
+              <p class="block__plain">{company.hours}</p>
+            </div>
+          )
+        }
+      </div>
+
+      <!-- ---------- form ---------- -->
+      <div class="contact__form" id="enquiry">
+        <h2 class="contact__form-title">Send an enquiry</h2>
+        <p class="contact__form-lede">
+          The more detail you give, the more precisely we can answer. Shaft size, series and
+          quantity are the most useful.
+        </p>
+
+        <EnquiryForm
+          client:load
+          accessKey={accessKey}
+          products={products.map((p) => p.name)}
+          phone={company.landlines[0] ?? company.mobile}
+          whatsappHref={waHref}
+          email={company.email}
+        />
+      </div>
+    </div>
+  </section>
+
+  {
+    company.mapEmbedUrl && (
+      <section class="map">
+        <iframe
+          src={company.mapEmbedUrl}
+          title={`Map showing ${company.legalName} in ${company.city}`}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(2rem, 1rem + 4vw, 4rem);
+    align-items: start;
+  }
+
+  /* ---- details ---- */
+  .contact__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kb-space-6);
+  }
+
+  .block__title {
+    font-size: var(--kb-text-xs);
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kb-blue);
+    margin-bottom: var(--kb-space-3);
+  }
+
+  .block__address {
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+    line-height: 1.6;
+    color: var(--kb-text-muted);
+  }
+
+  .block__address strong {
+    color: var(--kb-ink);
+    font-weight: 650;
+    margin-bottom: 0.15rem;
+  }
+
+  .block__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .block__list a {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .block__list a:hover {
+    text-decoration: underline;
+  }
+
+  .block__plain {
+    color: var(--kb-text-muted);
+  }
+
+  .wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: var(--kb-space-3);
+    padding: 0.5rem 0.95rem;
+    border: 1px solid color-mix(in srgb, var(--kb-blue) 25%, transparent);
+    border-radius: 100px;
+    font-size: var(--kb-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .wa:hover {
+    background: var(--kb-blue-tint);
+    border-color: var(--kb-blue);
+  }
+
+  /* ---- form ---- */
+  .contact__form {
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    background: var(--kb-grey-50);
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+    scroll-margin-top: calc(var(--kb-header-h) + 1.5rem);
+  }
+
+  .contact__form-title {
+    font-size: var(--kb-text-2xl);
+  }
+
+  .contact__form-lede {
+    margin-top: var(--kb-space-3);
+    margin-bottom: var(--kb-space-6);
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+    max-width: 52ch;
+  }
+
+  /* ---- map ---- */
+  .map iframe {
+    display: block;
+    width: 100%;
+    height: 420px;
+    border: 0;
+    border-top: 1px solid var(--kb-grey-200);
+  }
+
+  @media (max-width: 900px) {
+    .contact {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

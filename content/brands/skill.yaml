@@ -1,0 +1,7 @@
+name: SKILL
+order: 10
+relationship: stocked
+ranges:
+  - Bearings
+blurb: Stocked bearing brand supplied alongside our housing and accessory ranges.
+logo: null

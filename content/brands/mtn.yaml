@@ -1,0 +1,10 @@
+name: MTN
+order: 5
+relationship: authorised-distributor
+ranges:
+  - Adapter Sleeves
+  - Withdrawal Sleeves
+  - Lock Nuts
+  - Lock Washers
+blurb: Authorised distribution across the sleeve and locking component ranges.
+logo: null

@@ -1,0 +1,391 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionLabel from '../components/SectionLabel.astro';
+import ProductCard from '../components/ProductCard.astro';
+import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+import Watermark from '../components/Watermark.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getHomepage, getProducts, getBrands, RELATIONSHIP_LABEL } from '../lib/content';
+
+const home = await getHomepage();
+const products = await getProducts();
+const brands = await getBrands();
+
+const distributorCount = brands.filter((b) => b.relationship === 'authorised-distributor').length;
+---
+
+<BaseLayout
+  title="Kaybee International"
+  description="Bearing accessories distributor in Chennai since 1975. Plummer blocks, adapter and withdrawal sleeves, locating rings, lock nuts and lock washers held in ready stock for shaft sizes 1 inch to 7 inches. Non-standard sizes made to requirement."
+>
+  <!-- ============ hero ============ -->
+  <section class="hero">
+    <Watermark position="right" size="640px" tone="light" />
+    <div class="kb-container hero__inner">
+      <div class="hero__text">
+        {home.heroEyebrow && <p class="kb-eyebrow">{home.heroEyebrow}</p>}
+        <h1>{home.heroHeadline}</h1>
+        <p class="hero__sub">{home.heroSubhead}</p>
+        <div class="hero__actions">
+          <a class="kb-btn kb-btn--on-blue" href="/products">Browse products</a>
+          <a class="kb-btn kb-btn--outline-light" href="/contact#enquiry">Send an enquiry</a>
+        </div>
+      </div>
+
+      <div class="hero__media">
+        {
+          home.heroImage.file ? (
+            <img
+              src={home.heroImage.file}
+              alt={home.heroImage.alt}
+              width="720"
+              height="560"
+              fetchpriority="high"
+            />
+          ) : (
+            <ImagePlaceholder label="Hero photograph to follow" ratio="5 / 4" />
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ stats ============ -->
+  {
+    home.stats.length > 0 && (
+      <section class="stats">
+        <div class="kb-container stats__inner">
+          {home.stats.map((s) => (
+            <div class="stats__item">
+              <p class="stats__value">{s.value}</p>
+              <p class="stats__label">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ products ============ -->
+  <section class="kb-section" id="products">
+    <Watermark position="left" size="420px" tone="paper" />
+    <div class="kb-container">
+      <div class="kb-head">
+        <SectionLabel num="01" text="Products" />
+        <h2>Bearing accessories, held in stock in Chennai</h2>
+        <p class="kb-head__lede">
+          Housings, sleeves and locking components across seven ranges &mdash; supplied
+          individually or as matched assemblies, so what arrives actually fits together.
+        </p>
+      </div>
+
+      <div class="kb-grid kb-grid--3">
+        {products.map((product, i) => <ProductCard product={product} index={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ why us ============ -->
+  {
+    home.whyUs.length > 0 && (
+      <section class="kb-section kb-section--paper">
+        <div class="kb-container">
+          <div class="kb-head">
+            <SectionLabel num="02" text="Why Kaybee" />
+            <h2>Fifty years of getting the selection right</h2>
+          </div>
+
+          <div class="why">
+            {home.whyUs.map((item, i) => (
+              <article class="why__item">
+                <span class="why__num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{item.heading}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ============ brands ============ -->
+  <section class="kb-section">
+    <div class="kb-container">
+      <div class="kb-head">
+        <SectionLabel num="03" text="Brands" />
+        <h2>Authorised distribution across {distributorCount} established brands</h2>
+        <p class="kb-head__lede">
+          We are an authorised distributor for {distributorCount} brands and stock several more, so
+          you can be confident that what you receive is genuine.
+        </p>
+      </div>
+
+      <ul class="bband">
+        {
+          brands.map((b) => (
+            <li class:list={['bband__item', b.relationship === 'own' && 'is-own']}>
+              <span class="bband__name">{b.name}</span>
+              <span class="bband__rel">{RELATIONSHIP_LABEL[b.relationship]}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <a class="kb-btn kb-btn--ghost bband__link" href="/brands">
+        See what each brand supplies
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ custom work ============ -->
+  {
+    home.customWorkTitle && (
+      <section class="kb-section kb-section--tint">
+        <Watermark position="bottom-left" size="440px" tone="blue" />
+        <div class="kb-container custom">
+          <div>
+            <SectionLabel num="04" text="Non-standard sizes" />
+            <h2>{home.customWorkTitle}</h2>
+          </div>
+          <div class="custom__body">
+            <p>{home.customWorkBody}</p>
+            <a class="kb-btn kb-btn--primary" href="/contact#enquiry">
+              Discuss a custom requirement
+            </a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  /* ---- hero ---- */
+  .hero {
+    position: relative;
+    background: var(--kb-gradient-deep);
+    color: var(--kb-white);
+    overflow: hidden;
+    padding-block: clamp(3rem, 1.5rem + 6vw, 6rem);
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 1rem + 4vw, 4.5rem);
+  }
+
+  .hero h1 {
+    margin-top: var(--kb-space-4);
+    color: var(--kb-white);
+    max-width: 22ch;
+  }
+
+  .hero__sub {
+    margin-top: var(--kb-space-5);
+    max-width: 54ch;
+    font-size: var(--kb-text-lg);
+    color: color-mix(in srgb, var(--kb-white) 85%, transparent);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kb-space-3);
+    margin-top: var(--kb-space-6);
+  }
+
+  .hero__media img {
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    border-radius: var(--kb-radius-lg);
+    box-shadow: var(--kb-shadow-lg);
+  }
+
+  /* ---- stats ---- */
+  .stats {
+    background: var(--kb-white);
+    border-bottom: 1px solid var(--kb-grey-100);
+  }
+
+  .stats__inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--kb-space-4);
+    padding-block: var(--kb-space-6);
+  }
+
+  .stats__item {
+    text-align: center;
+    padding-inline: var(--kb-space-3);
+  }
+
+  .stats__item + .stats__item {
+    border-left: 1px solid var(--kb-grey-100);
+  }
+
+  .stats__value {
+    font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    background: var(--kb-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .stats__label {
+    margin-top: var(--kb-space-2);
+    font-size: var(--kb-text-xs);
+    font-weight: 550;
+    color: var(--kb-text-muted);
+    line-height: 1.45;
+  }
+
+  /* ---- why us ---- */
+  .why {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+    gap: var(--kb-space-5);
+  }
+
+  .why__item {
+    position: relative;
+    padding: var(--kb-space-5);
+    padding-top: var(--kb-space-6);
+    background: var(--kb-white);
+    border-radius: var(--kb-radius-lg);
+    border: 1px solid color-mix(in srgb, var(--kb-blue) 10%, transparent);
+  }
+
+  .why__num {
+    position: absolute;
+    top: var(--kb-space-4);
+    right: var(--kb-space-5);
+    font-size: var(--kb-text-2xl);
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+    color: var(--kb-paper);
+    line-height: 1;
+  }
+
+  .why__item h3 {
+    font-size: var(--kb-text-lg);
+    max-width: 22ch;
+  }
+
+  .why__item p {
+    margin-top: var(--kb-space-3);
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+    line-height: 1.6;
+  }
+
+  /* ---- brand band ---- */
+  .bband {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr));
+    gap: var(--kb-space-3);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .bband__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: var(--kb-space-4);
+    background: var(--kb-white);
+    border: var(--kb-border);
+    border-radius: var(--kb-radius);
+    text-align: center;
+    transition: border-color var(--kb-transition), box-shadow var(--kb-transition);
+  }
+
+  .bband__item:hover {
+    border-color: color-mix(in srgb, var(--kb-blue) 32%, transparent);
+    box-shadow: var(--kb-shadow-sm);
+  }
+
+  .bband__item.is-own {
+    background: var(--kb-blue-tint);
+    border-color: color-mix(in srgb, var(--kb-blue) 25%, transparent);
+  }
+
+  .bband__name {
+    font-size: var(--kb-text-lg);
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    color: var(--kb-blue);
+  }
+
+  .bband__rel {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--kb-text-subtle);
+  }
+
+  .bband__link {
+    margin-top: var(--kb-space-6);
+  }
+
+  /* ---- custom work ---- */
+  .custom {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: var(--kb-space-7);
+    align-items: start;
+  }
+
+  .custom__body p {
+    color: var(--kb-text-muted);
+    max-width: 58ch;
+  }
+
+  .custom__body .kb-btn {
+    margin-top: var(--kb-space-5);
+  }
+
+  /* ---- responsive ---- */
+  @media (max-width: 900px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+    .hero__media {
+      order: -1;
+      max-width: 460px;
+    }
+    .stats__inner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--kb-space-5) var(--kb-space-4);
+    }
+    .stats__item:nth-child(3) {
+      border-left: 0;
+    }
+    .custom {
+      grid-template-columns: 1fr;
+      gap: var(--kb-space-5);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .hero h1 {
+      max-width: none;
+    }
+    .hero__actions .kb-btn {
+      flex: 1;
+      min-width: 150px;
+    }
+  }
+</style>

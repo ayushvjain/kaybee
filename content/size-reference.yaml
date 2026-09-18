@@ -1,0 +1,85 @@
+heading: Series and shaft size reference
+intro: The plummer block series Kaybee International holds as ready stock, and the shaft
+  sizes covered. Use it to narrow down what you need before enquiring. If your shaft size
+  is not listed, we manufacture non-standard sizes to requirement.
+shaftSizes:
+  - '1"'
+  - '1.1/2"'
+  - '2"'
+  - '2.1/2"'
+  - '3"'
+  - '3.1/2"'
+  - '4"'
+  - '5"'
+  - '6"'
+  - '7"'
+rows:
+  - series: S
+    note: Standard plummer block housing
+    available:
+      - '1"'
+      - '1.1/2"'
+      - '2"'
+      - '2.1/2"'
+      - '3"'
+      - '3.1/2"'
+      - '4"'
+      - '5"'
+      - '6"'
+      - '7"'
+  - series: SN
+    note: Split housing
+    available:
+      - '1"'
+      - '1.1/2"'
+      - '2"'
+      - '2.1/2"'
+      - '3"'
+      - '3.1/2"'
+      - '4"'
+      - '5"'
+      - '6"'
+      - '7"'
+  - series: SNA
+    note: Split housing variant
+    available:
+      - '1"'
+      - '1.1/2"'
+      - '2"'
+      - '2.1/2"'
+      - '3"'
+      - '3.1/2"'
+      - '4"'
+      - '5"'
+      - '6"'
+      - '7"'
+  - series: SNH
+    note: Heavy duty housing
+    available:
+      - '1"'
+      - '1.1/2"'
+      - '2"'
+      - '2.1/2"'
+      - '3"'
+      - '3.1/2"'
+      - '4"'
+      - '5"'
+      - '6"'
+      - '7"'
+  - series: MNL
+    note: Medium and large housing
+    available:
+      - '1"'
+      - '1.1/2"'
+      - '2"'
+      - '2.1/2"'
+      - '3"'
+      - '3.1/2"'
+      - '4"'
+      - '5"'
+      - '6"'
+      - '7"'
+footnote: This table shows stock availability by series and shaft size only. It is not a
+  dimensional specification, and no bore, outer diameter, width or tolerance figures are
+  published here. Confirm the exact designation with us before ordering and we will check
+  it against the manufacturer data for your application.

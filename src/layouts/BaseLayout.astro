@@ -1,0 +1,137 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCompany } from '../lib/content';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Page-specific JSON-LD, merged after the site-wide LocalBusiness graph. */
+  schema?: Record<string, unknown>;
+  ogType?: string;
+}
+
+const { title, description, schema, ogType = 'website' } = Astro.props;
+
+const company = await getCompany();
+
+const SITE_NAME = 'Kaybee International';
+const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://kaybeint.com');
+// Must be a raster format: Facebook, LinkedIn, WhatsApp and X do not render SVG.
+const ogImage = new URL('/brand/og-image.png', Astro.site ?? 'https://kaybeint.com');
+
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': 'https://kaybeint.com/#organisation',
+  name: company.legalName,
+  description: company.tagline,
+  url: 'https://kaybeint.com',
+  email: company.email,
+  telephone: [...company.landlines, company.mobile].filter(Boolean),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: company.addressLines.join(', '),
+    addressLocality: company.city,
+    postalCode: company.pincode,
+    addressRegion: company.state,
+    addressCountry: 'IN',
+  },
+  areaServed: { '@type': 'Country', name: 'India' },
+  foundingDate: '1975',
+  logo: new URL('/brand/kaybee-logo.svg', Astro.site ?? 'https://kaybeint.com').href,
+  ...(company.hours ? { openingHours: company.hours } : {}),
+};
+---
+
+<!doctype html>
+<html lang="en-IN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:locale" content="en_IN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage.href} />
+
+    <meta name="theme-color" content="#0054a6" />
+    <meta name="geo.region" content="IN-TN" />
+    <meta name="geo.placename" content="Chennai" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/brand/kaybee-monogram.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} is:inline />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />}
+  </head>
+
+  <body>
+    <a class="kb-skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <script is:inline>
+      // Header: add a shadow once the page is scrolled, and drive the mobile menu.
+      (() => {
+        const header = document.querySelector('[data-header]');
+        if (header) {
+          const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+          onScroll();
+          window.addEventListener('scroll', onScroll, { passive: true });
+        }
+
+        const toggle = document.querySelector('[data-nav-toggle]');
+        const panel = document.querySelector('[data-nav-panel]');
+        if (!toggle || !panel) return;
+
+        // The header is a utility bar stacked above the main bar, so the panel's
+        // offset cannot be a single fixed value - measure the header instead,
+        // otherwise the panel rides up over the logo.
+        const positionPanel = () => {
+          if (!header) return;
+          panel.style.top = `${Math.round(header.getBoundingClientRect().bottom)}px`;
+        };
+
+        const setOpen = (open) => {
+          if (open) positionPanel();
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+          panel.classList.toggle('is-open', open);
+          document.body.style.overflow = open ? 'hidden' : '';
+        };
+
+        window.addEventListener('resize', () => {
+          if (toggle.getAttribute('aria-expanded') === 'true') positionPanel();
+          else setOpen(false);
+        });
+
+        toggle.addEventListener('click', () =>
+          setOpen(toggle.getAttribute('aria-expanded') !== 'true')
+        );
+        panel.addEventListener('click', (e) => {
+          if (e.target instanceof Element && e.target.closest('a')) setOpen(false);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') setOpen(false);
+        });
+      })();
+    </script>
+  </body>
+</html>

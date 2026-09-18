@@ -1,0 +1,213 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getDownloads, getCompany, mailtoHref } from '../lib/content';
+
+const downloads = await getDownloads();
+const company = await getCompany();
+---
+
+<BaseLayout
+  title="Downloads"
+  description="Download the Kaybee International brochure and product catalogues for plummer blocks, adapter sleeves, withdrawal sleeves and bearing accessories."
+>
+  <PageHero
+    eyebrow="Literature"
+    title="Downloads"
+    lede="Brochures, catalogues and specification sheets for our bearing accessory ranges."
+  />
+
+  <section class="kb-section">
+    <div class="kb-container">
+      {
+        downloads.length > 0 ? (
+          <ul class="dl">
+            {downloads.map((d) => (
+              <li class="dl__item">
+                <span class="dl__icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linejoin="round"
+                    />
+                    <path d="M14 2v6h6" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+                  </svg>
+                </span>
+
+                <div class="dl__text">
+                  <h2>{d.title}</h2>
+                  {d.description && <p>{d.description}</p>}
+                </div>
+
+                {d.file && (
+                  <a class="kb-btn kb-btn--primary dl__btn" href={d.file} download>
+                    Download
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path
+                        d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 19h16"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          /*
+           * No literature has been uploaded yet. Rather than ship a dead link,
+           * the page explains the position and offers the direct route.
+           */
+          <div class="empty">
+            <h2>Our brochure is being prepared</h2>
+            <p>
+              There is nothing to download from this page just yet. In the meantime, tell us what
+              you are looking for and we will send the relevant details directly, along with
+              current availability.
+            </p>
+            <div class="empty__actions">
+              <a class="kb-btn kb-btn--primary" href="/contact#enquiry">Request details</a>
+              {company.email && (
+                <a
+                  class="kb-btn kb-btn--ghost"
+                  href={mailtoHref(company.email, 'Brochure request from kaybeint.com')}
+                >
+                  Email us
+                </a>
+              )}
+            </div>
+          </div>
+        )
+      }
+
+      <div class="alt">
+        <h2 class="alt__title">Prefer to browse online?</h2>
+        <ul>
+          <li><a href="/products">Full product range</a></li>
+          <li><a href="/size-reference">Series and shaft size reference</a></li>
+          <li><a href="/brands">Brands and what each supplies</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>
+
+<style>
+  .dl {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kb-space-4);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dl__item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--kb-space-5);
+    padding: var(--kb-space-5);
+    background: var(--kb-white);
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+    transition: border-color var(--kb-transition), box-shadow var(--kb-transition);
+  }
+
+  .dl__item:hover {
+    border-color: color-mix(in srgb, var(--kb-blue) 30%, transparent);
+    box-shadow: var(--kb-shadow-sm);
+  }
+
+  .dl__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--kb-radius);
+    background: var(--kb-blue-tint);
+    color: var(--kb-blue);
+  }
+
+  .dl__text h2 {
+    font-size: var(--kb-text-lg);
+  }
+
+  .dl__text p {
+    margin-top: 0.25rem;
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+  }
+
+  /* ---- empty state ---- */
+  .empty {
+    padding: clamp(1.75rem, 1rem + 3vw, 3rem);
+    background: var(--kb-paper);
+    border-radius: var(--kb-radius-lg);
+    border-left: 3px solid var(--kb-cyan);
+  }
+
+  .empty h2 {
+    font-size: var(--kb-text-2xl);
+  }
+
+  .empty p {
+    margin-top: var(--kb-space-4);
+    max-width: 62ch;
+    color: var(--kb-text-muted);
+    font-size: var(--kb-text-lg);
+    line-height: 1.7;
+  }
+
+  .empty__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kb-space-3);
+    margin-top: var(--kb-space-6);
+  }
+
+  /* ---- alternatives ---- */
+  .alt {
+    margin-top: var(--kb-space-8);
+    padding-top: var(--kb-space-6);
+    border-top: 2px solid var(--kb-grey-100);
+  }
+
+  .alt__title {
+    font-size: var(--kb-text-xs);
+    font-weight: 650;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--kb-text-subtle);
+    margin-bottom: var(--kb-space-4);
+  }
+
+  .alt ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kb-space-5);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--kb-text-sm);
+  }
+
+  @media (max-width: 640px) {
+    .dl__item {
+      grid-template-columns: auto 1fr;
+      gap: var(--kb-space-4);
+    }
+    .dl__btn {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

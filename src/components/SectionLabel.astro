@@ -1,0 +1,13 @@
+---
+interface Props {
+  num?: string;
+  text: string;
+}
+
+const { num, text } = Astro.props;
+---
+
+<p class="kb-label">
+  {num && <span class="kb-label__num">{num}</span>}
+  <span>{text}</span>
+</p>

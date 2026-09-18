@@ -1,0 +1,202 @@
+/*
+ * Enquiry form styles.
+ *
+ * EnquiryForm is a React island, so Astro's scoped styles do not reach it.
+ * These are global and namespaced with .ef instead.
+ */
+
+.ef {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-space-4);
+}
+
+.ef__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--kb-space-4);
+}
+
+.ef__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.ef__label {
+  font-size: var(--kb-text-sm);
+  font-weight: 600;
+  color: var(--kb-grey-700);
+}
+
+.ef__req {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.ef__input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  background: var(--kb-white);
+  border: 1px solid var(--kb-grey-300);
+  border-radius: var(--kb-radius);
+  font-size: var(--kb-text-base);
+  color: var(--kb-ink);
+  transition: border-color var(--kb-transition), box-shadow var(--kb-transition);
+}
+
+.ef__input::placeholder {
+  color: var(--kb-grey-500);
+}
+
+.ef__input:hover {
+  border-color: var(--kb-grey-500);
+}
+
+.ef__input:focus {
+  outline: none;
+  border-color: var(--kb-blue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--kb-blue) 16%, transparent);
+}
+
+.ef__input[aria-invalid='true'] {
+  border-color: #c0392b;
+}
+
+.ef__input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, #c0392b 16%, transparent);
+}
+
+textarea.ef__input {
+  resize: vertical;
+  min-height: 7rem;
+  line-height: 1.6;
+}
+
+select.ef__input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237a838f' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  padding-right: 2.2rem;
+}
+
+.ef__error {
+  font-size: var(--kb-text-xs);
+  font-weight: 500;
+  color: #c0392b;
+}
+
+.ef__honeypot {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.ef__field--spacer {
+  display: none;
+}
+
+.ef__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--kb-space-5);
+  flex-wrap: wrap;
+  margin-top: var(--kb-space-2);
+}
+
+.ef__actions .kb-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.ef__note {
+  font-size: var(--kb-text-xs);
+  color: var(--kb-text-subtle);
+  max-width: 32ch;
+}
+
+/* ---- alert / notice / success blocks ---- */
+
+.ef__alert,
+.ef--notice,
+.ef--success {
+  padding: var(--kb-space-5);
+  border-radius: var(--kb-radius-lg);
+  font-size: var(--kb-text-sm);
+  line-height: 1.6;
+}
+
+.ef__alert {
+  background: #fdf2f0;
+  border: 1px solid #f0c7c0;
+  color: #7d2b1d;
+}
+
+.ef--notice {
+  background: var(--kb-paper);
+  border: 1px solid var(--kb-grey-200);
+}
+
+.ef--notice h3,
+.ef--success h3 {
+  font-size: var(--kb-text-lg);
+  margin-bottom: var(--kb-space-3);
+}
+
+.ef--notice p,
+.ef--success p {
+  color: var(--kb-text-muted);
+  max-width: 54ch;
+}
+
+.ef--success {
+  background: var(--kb-blue-tint);
+  border: 1px solid color-mix(in srgb, var(--kb-blue) 22%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--kb-space-3);
+}
+
+.ef--success svg {
+  color: var(--kb-blue);
+}
+
+.ef__fallbacks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kb-space-2);
+  list-style: none;
+  padding: 0;
+  margin-block: var(--kb-space-4);
+}
+
+.ef__fallbacks a {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  background: var(--kb-white);
+  border: 1px solid var(--kb-grey-300);
+  border-radius: 100px;
+  font-size: var(--kb-text-sm);
+  font-weight: 600;
+  color: var(--kb-blue);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.ef__fallbacks a:hover {
+  border-color: var(--kb-blue);
+  background: var(--kb-blue-tint);
+}
+
+@media (max-width: 620px) {
+  .ef__row {
+    grid-template-columns: 1fr;
+  }
+}

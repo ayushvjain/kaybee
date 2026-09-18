@@ -1,0 +1,122 @@
+---
+import Watermark from './Watermark.astro';
+import { getCompany, telHref, whatsappHref } from '../lib/content';
+
+interface Props {
+  title?: string;
+  body?: string;
+}
+
+const {
+  title = 'Not sure which part you need?',
+  body = 'Send us the shaft size, series or a photograph of the component you are replacing. We will tell you what fits, what we hold in stock, and what can be made to requirement.',
+} = Astro.props;
+
+const company = await getCompany();
+const primary = company.landlines[0] ?? company.mobile;
+---
+
+<section class="kb-section cta">
+  <Watermark position="right" size="480px" tone="light" />
+  <div class="kb-container cta__inner">
+    <div class="cta__text">
+      <h2>{title}</h2>
+      <p>{body}</p>
+    </div>
+
+    <div class="cta__actions">
+      <a class="kb-btn kb-btn--on-blue" href="/contact#enquiry">Send an enquiry</a>
+      {
+        primary && (
+          <a class="kb-btn kb-btn--outline-light" href={telHref(primary)}>
+            Call {primary}
+          </a>
+        )
+      }
+      {
+        company.mobile && (
+          <a
+            class="cta__wa"
+            href={whatsappHref(company.mobile, 'Hello Kaybee International, I have an enquiry about')}
+            target="_blank"
+            rel="noopener"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2Zm5.8 14.02c-.24.68-1.4 1.3-1.93 1.35-.53.05-1.03.24-3.47-.72-2.95-1.16-4.8-4.23-4.94-4.43-.14-.2-1.17-1.56-1.17-2.97 0-1.42.74-2.11 1-2.4.26-.29.57-.36.77-.36.19 0 .38 0 .55.01.18.01.41-.07.64.48.24.58.81 1.99.88 2.13.07.14.12.31.02.5-.1.2-.15.32-.29.49-.15.17-.31.39-.44.52-.14.14-.29.29-.13.58.17.29.74 1.21 1.58 1.96 1.09.97 2 1.27 2.29 1.41.28.15.45.12.62-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.65-.14.26.09 1.67.79 1.96.93.29.15.48.22.55.34.07.13.07.74-.17 1.42Z"
+              ></path>
+            </svg>
+            WhatsApp us
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    background: var(--kb-gradient-deep);
+    color: var(--kb-white);
+    overflow: hidden;
+  }
+
+  .cta__inner {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    align-items: center;
+    gap: var(--kb-space-7);
+  }
+
+  .cta__text h2 {
+    color: var(--kb-white);
+    font-size: var(--kb-text-3xl);
+  }
+
+  .cta__text p {
+    margin-top: var(--kb-space-4);
+    max-width: 52ch;
+    color: color-mix(in srgb, var(--kb-white) 84%, transparent);
+  }
+
+  .cta__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--kb-space-3);
+  }
+
+  .cta__actions .kb-btn {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .cta__wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--kb-text-sm);
+    font-weight: 600;
+    color: var(--kb-cyan);
+    text-decoration: none;
+    padding-top: var(--kb-space-1);
+  }
+
+  .cta__wa:hover {
+    color: var(--kb-white);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 860px) {
+    .cta__inner {
+      grid-template-columns: 1fr;
+      gap: var(--kb-space-6);
+    }
+    .cta__actions {
+      width: 100%;
+    }
+    .cta__actions .kb-btn {
+      max-width: none;
+    }
+  }
+</style>

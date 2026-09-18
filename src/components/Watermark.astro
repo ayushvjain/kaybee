@@ -1,0 +1,76 @@
+---
+import outlineSvg from '../../public/brand/kaybee-monogram-outline.svg?raw';
+
+/**
+ * Large outlined KB monogram used as a section background device.
+ *
+ * Reproduces the treatment already used on the printed letterhead, and is what
+ * gives pages brand presence while real product photography is pending.
+ *
+ * The SVG is inlined rather than loaded via <img> so its `stroke="currentColor"`
+ * inherits the tone set below.
+ */
+interface Props {
+  position?: 'right' | 'left' | 'bottom-left';
+  size?: string;
+  tone?: 'paper' | 'blue' | 'light';
+}
+
+const { position = 'right', size = '520px', tone = 'paper' } = Astro.props;
+
+const TONE_COLOR = {
+  paper: 'var(--kb-paper)',
+  blue: 'color-mix(in srgb, var(--kb-blue) 15%, transparent)',
+  light: 'color-mix(in srgb, #ffffff 16%, transparent)',
+};
+---
+
+<div
+  class:list={['kb-watermark', `kb-watermark--${position}`]}
+  style={`--wm-size:${size};--wm-color:${TONE_COLOR[tone]};`}
+  aria-hidden="true"
+>
+  <div class="kb-watermark__art" set:html={outlineSvg} />
+</div>
+
+<style>
+  .kb-watermark {
+    inset-inline: 0;
+    color: var(--wm-color);
+  }
+
+  .kb-watermark__art {
+    position: absolute;
+    width: var(--wm-size);
+  }
+
+  .kb-watermark__art :global(svg) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .kb-watermark--right .kb-watermark__art {
+    top: -8%;
+    right: -6%;
+    rotate: -6deg;
+  }
+
+  .kb-watermark--left .kb-watermark__art {
+    top: -10%;
+    left: -8%;
+    rotate: 5deg;
+  }
+
+  .kb-watermark--bottom-left .kb-watermark__art {
+    bottom: -20%;
+    left: -7%;
+    rotate: -3deg;
+  }
+
+  @media (max-width: 720px) {
+    .kb-watermark {
+      --wm-size: 300px;
+    }
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import outlineSvg from '../../public/brand/kaybee-monogram-outline.svg?raw';
+
+/**
+ * Stand-in for product photography that has not been supplied yet.
+ *
+ * Deliberately branded and visibly labelled rather than a grey box: the intent
+ * is that the page looks considered while the slot is empty. Sized to the real
+ * image slot, so dropping a photograph in via the admin needs no layout change.
+ *
+ * See assets/NEEDED-IMAGES.md for the shot list.
+ */
+interface Props {
+  label?: string;
+  ratio?: string;
+  compact?: boolean;
+}
+
+const { label = 'Photograph to follow', ratio = '4 / 3', compact = false } = Astro.props;
+---
+
+<div class:list={['ph', compact && 'ph--compact']} style={`--ph-ratio:${ratio};`}>
+  <div class="ph__mark" set:html={outlineSvg} />
+  <span class="ph__label">{label}</span>
+</div>
+
+<style>
+  .ph {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--kb-space-3);
+    aspect-ratio: var(--ph-ratio);
+    width: 100%;
+    background:
+      linear-gradient(135deg, var(--kb-grey-50) 0%, var(--kb-blue-tint) 100%);
+    border: 1px dashed var(--kb-grey-300);
+    border-radius: var(--kb-radius);
+    color: var(--kb-blue);
+    overflow: hidden;
+  }
+
+  /* Faint diagonal hatching, so it reads clearly as a placeholder. */
+  .ph::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--kb-blue) 5%, transparent) 0 1px,
+      transparent 1px 11px
+    );
+  }
+
+  .ph__mark {
+    position: relative;
+    width: clamp(34px, 16%, 56px);
+    opacity: 0.45;
+  }
+
+  .ph__mark :global(svg) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ph__label {
+    position: relative;
+    font-size: var(--kb-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--kb-blue);
+    opacity: 0.75;
+    text-align: center;
+    padding-inline: var(--kb-space-4);
+  }
+
+  .ph--compact {
+    gap: var(--kb-space-2);
+  }
+
+  .ph--compact .ph__mark {
+    width: 28px;
+  }
+
+  .ph--compact .ph__label {
+    font-size: 0.6875rem;
+  }
+</style>

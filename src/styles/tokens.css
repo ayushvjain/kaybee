@@ -1,0 +1,100 @@
+/*
+ * Design tokens for Kaybee International.
+ *
+ * The palette is not invented: every brand colour below was extracted from the
+ * vector data in assets/KAYBEE STATIONERY.pdf, so the site matches the printed
+ * business cards and letterhead exactly.
+ */
+
+:root {
+  /* ---- brand palette (from the stationery artwork) ---- */
+  --kb-blue: #0054a6;
+  --kb-blue-mid: #0072bc;
+  --kb-sky: #0095da;
+  --kb-cyan: #00aeef;
+  --kb-ink: #231f20;
+  --kb-paper: #f0efe8;
+
+  /* ---- derived neutrals ---- */
+  --kb-white: #ffffff;
+  --kb-grey-50: #f7f8fa;
+  --kb-grey-100: #eef1f5;
+  --kb-grey-200: #dfe4ea;
+  --kb-grey-300: #c4ccd6;
+  --kb-grey-500: #7a838f;
+  --kb-grey-700: #48505a;
+
+  /* ---- derived brand shades ---- */
+  --kb-blue-dark: #013b75;
+  --kb-blue-deeper: #002a54;
+  --kb-blue-tint: #eaf3fb;
+  --kb-cyan-tint: #e5f7fe;
+
+  /*
+   * Accessible text colours.
+   * --kb-cyan on white is ~2.3:1 and fails WCAG AA for text, so it is reserved
+   * for large decorative shapes, rules and icon strokes. Text uses these.
+   */
+  --kb-text: var(--kb-ink);
+  --kb-text-muted: var(--kb-grey-700);
+  --kb-text-subtle: var(--kb-grey-500);
+  --kb-link: var(--kb-blue);
+  --kb-link-hover: var(--kb-blue-dark);
+
+  /* ---- gradients ---- */
+  --kb-gradient: linear-gradient(135deg, var(--kb-blue) 0%, var(--kb-sky) 55%, var(--kb-cyan) 100%);
+  --kb-gradient-deep: linear-gradient(160deg, var(--kb-blue-deeper) 0%, var(--kb-blue) 60%, var(--kb-blue-mid) 100%);
+  --kb-rule-gradient: linear-gradient(90deg, var(--kb-blue) 0%, var(--kb-cyan) 100%);
+
+  /* ---- typography ---- */
+  --kb-font: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Arial, Helvetica, sans-serif;
+
+  --kb-text-xs: 0.75rem;
+  --kb-text-sm: 0.875rem;
+  --kb-text-base: 1rem;
+  --kb-text-lg: 1.125rem;
+  --kb-text-xl: 1.375rem;
+  --kb-text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
+  --kb-text-3xl: clamp(1.75rem, 1.3rem + 1.9vw, 2.5rem);
+  --kb-text-4xl: clamp(2.125rem, 1.4rem + 3vw, 3.5rem);
+
+  /* ---- spacing ---- */
+  --kb-space-1: 0.25rem;
+  --kb-space-2: 0.5rem;
+  --kb-space-3: 0.75rem;
+  --kb-space-4: 1rem;
+  --kb-space-5: 1.5rem;
+  --kb-space-6: 2rem;
+  --kb-space-7: 3rem;
+  --kb-space-8: 4rem;
+  --kb-space-9: 6rem;
+
+  /* ---- layout ---- */
+  --kb-container: 1200px;
+  --kb-container-narrow: 820px;
+  --kb-gutter: clamp(1rem, 0.4rem + 2.4vw, 2.5rem);
+  --kb-section-y: clamp(3.5rem, 2rem + 6vw, 6.5rem);
+
+  /* ---- borders and shadows ---- */
+  --kb-radius-sm: 3px;
+  --kb-radius: 6px;
+  --kb-radius-lg: 10px;
+  --kb-border: 1px solid var(--kb-grey-200);
+
+  --kb-shadow-sm: 0 1px 2px rgb(2 32 63 / 0.06), 0 1px 3px rgb(2 32 63 / 0.04);
+  --kb-shadow: 0 2px 6px rgb(2 32 63 / 0.06), 0 8px 24px rgb(2 32 63 / 0.07);
+  --kb-shadow-lg: 0 4px 12px rgb(2 32 63 / 0.08), 0 18px 44px rgb(2 32 63 / 0.12);
+
+  /* ---- motion ---- */
+  --kb-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --kb-transition: 200ms var(--kb-ease);
+
+  --kb-header-h: 76px;
+}
+
+@media (max-width: 860px) {
+  :root {
+    --kb-header-h: 64px;
+  }
+}

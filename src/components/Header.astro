@@ -1,0 +1,384 @@
+---
+import { getCompany, telHref } from '../lib/content';
+
+const company = await getCompany();
+const primaryPhone = company.landlines[0] ?? company.mobile;
+
+const NAV = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Us' },
+  { href: '/products', label: 'Products' },
+  { href: '/brands', label: 'Brands' },
+  { href: '/size-reference', label: 'Size Reference' },
+  { href: '/downloads', label: 'Downloads' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+---
+
+<header class="hdr" data-header>
+  {
+    primaryPhone && (
+      <div class="hdr__bar">
+        <div class="kb-container hdr__bar-inner">
+          <span class="hdr__bar-text">Authorised distributor &middot; Chennai &middot; Since 1975</span>
+          <a class="hdr__bar-link" href={telHref(primaryPhone)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+            {primaryPhone}
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  <div class="hdr__main">
+    <div class="kb-container hdr__inner">
+      <a class="hdr__logo" href="/" aria-label="Kaybee International, home">
+        <img
+          src="/brand/kaybee-logo-horizontal.svg"
+          alt="Kaybee International"
+          width="172"
+          height="53"
+        />
+      </a>
+
+      <nav class="hdr__nav" aria-label="Main">
+        <ul class="hdr__list">
+          {
+            NAV.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="hdr__link"
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div class="hdr__actions">
+        <a class="kb-btn kb-btn--primary hdr__cta" href="/contact#enquiry">Send Enquiry</a>
+        <button
+          class="hdr__toggle"
+          type="button"
+          data-nav-toggle
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          aria-label="Open menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hdr__panel" id="mobile-nav" data-nav-panel>
+    <nav aria-label="Mobile">
+      <ul class="hdr__panel-list">
+        {
+          NAV.map((item, i) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                <span class="hdr__panel-num">{String(i + 1).padStart(2, '0')}</span>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="hdr__panel-foot">
+      {primaryPhone && <a href={telHref(primaryPhone)}>{primaryPhone}</a>}
+      {company.email && <a href={`mailto:${company.email}`}>{company.email}</a>}
+    </div>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--kb-white);
+  }
+
+  .hdr.is-scrolled .hdr__main {
+    box-shadow: var(--kb-shadow-sm);
+  }
+
+  /* ---- top utility bar ---- */
+  .hdr__bar {
+    background: var(--kb-blue-deeper);
+    color: color-mix(in srgb, var(--kb-white) 85%, transparent);
+    font-size: var(--kb-text-xs);
+  }
+
+  .hdr__bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--kb-space-4);
+    min-height: 34px;
+  }
+
+  .hdr__bar-text {
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .hdr__bar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--kb-white);
+    text-decoration: none;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hdr__bar-link:hover {
+    color: var(--kb-cyan);
+  }
+
+  /* ---- main bar ---- */
+  .hdr__main {
+    background: var(--kb-white);
+    border-bottom: 1px solid var(--kb-grey-100);
+    transition: box-shadow var(--kb-transition);
+  }
+
+  .hdr__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--kb-space-5);
+    min-height: var(--kb-header-h);
+  }
+
+  .hdr__logo {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .hdr__logo img {
+    /*
+     * Horizontal lockup, not the stacked stationery one: at header height the
+     * stacked version renders its wordmark unreadably small.
+     */
+    height: 46px;
+    width: auto;
+  }
+
+  .hdr__nav {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hdr__list {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, -0.4rem + 1.6vw, 1.5rem);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .hdr__link {
+    position: relative;
+    display: block;
+    padding: 0.45rem 0.1rem;
+    font-size: var(--kb-text-sm);
+    font-weight: 550;
+    color: var(--kb-grey-700);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .hdr__link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: var(--kb-rule-gradient);
+    scale: 0 1;
+    transform-origin: left;
+    transition: scale var(--kb-transition);
+  }
+
+  .hdr__link:hover {
+    color: var(--kb-blue);
+  }
+
+  .hdr__link:hover::after,
+  .hdr__link[aria-current='page']::after {
+    scale: 1 1;
+  }
+
+  .hdr__link[aria-current='page'] {
+    color: var(--kb-blue);
+    font-weight: 650;
+  }
+
+  .hdr__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--kb-space-3);
+    flex-shrink: 0;
+  }
+
+  .hdr__cta {
+    padding: 0.6rem 1.15rem;
+  }
+
+  /* ---- mobile toggle ---- */
+  .hdr__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    padding: 0 9px;
+    background: transparent;
+    border: 1px solid var(--kb-grey-200);
+    border-radius: var(--kb-radius);
+  }
+
+  .hdr__toggle span {
+    display: block;
+    height: 2px;
+    background: var(--kb-blue);
+    border-radius: 2px;
+    transition: transform var(--kb-transition), opacity var(--kb-transition);
+  }
+
+  .hdr__toggle[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .hdr__toggle[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+  .hdr__toggle[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* ---- mobile panel ---- */
+  .hdr__panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: var(--kb-header-h);
+    background: var(--kb-white);
+    padding: var(--kb-space-5) var(--kb-gutter) var(--kb-space-7);
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -8px;
+    transition: opacity var(--kb-transition), translate var(--kb-transition),
+      visibility var(--kb-transition);
+  }
+
+  .hdr__panel.is-open {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+
+  .hdr__panel-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .hdr__panel-list li + li {
+    border-top: 1px solid var(--kb-grey-100);
+  }
+
+  .hdr__panel-list a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--kb-space-4);
+    padding: 1rem 0.25rem;
+    font-size: var(--kb-text-xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--kb-ink);
+    text-decoration: none;
+  }
+
+  .hdr__panel-list a[aria-current='page'] {
+    color: var(--kb-blue);
+  }
+
+  .hdr__panel-num {
+    font-size: var(--kb-text-xs);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--kb-cyan);
+    letter-spacing: 0.1em;
+  }
+
+  .hdr__panel-foot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--kb-space-2);
+    margin-top: var(--kb-space-6);
+    padding-top: var(--kb-space-5);
+    border-top: 2px solid var(--kb-paper);
+    font-size: var(--kb-text-sm);
+    font-weight: 600;
+  }
+
+  @media (max-width: 1080px) {
+    .hdr__list {
+      gap: 0.75rem;
+    }
+    .hdr__link {
+      font-size: var(--kb-text-xs);
+    }
+  }
+
+  @media (max-width: 940px) {
+    .hdr__nav {
+      display: none;
+    }
+    .hdr__toggle {
+      display: flex;
+    }
+    .hdr__panel {
+      display: block;
+    }
+    .hdr__logo img {
+      height: 38px;
+    }
+    .hdr__bar-text {
+      display: none;
+    }
+    .hdr__bar-inner {
+      justify-content: flex-end;
+    }
+  }
+
+  @media (max-width: 460px) {
+    .hdr__cta {
+      display: none;
+    }
+  }
+</style>

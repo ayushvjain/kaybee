@@ -1,0 +1,160 @@
+---
+import ImagePlaceholder from './ImagePlaceholder.astro';
+import type { Product } from '../lib/content';
+
+interface Props {
+  product: Product;
+  index?: number;
+}
+
+const { product, index } = Astro.props;
+const hero = product.images[0];
+---
+
+<a class="card" href={`/products/${product.slug}`}>
+  <div class="card__media">
+    {
+      hero?.file ? (
+        <img src={hero.file} alt={hero.alt} loading="lazy" decoding="async" width="640" height="480" />
+      ) : (
+        <ImagePlaceholder label={product.name} ratio="4 / 3" />
+      )
+    }
+    {index !== undefined && <span class="card__num">{String(index + 1).padStart(2, '0')}</span>}
+  </div>
+
+  <div class="card__body">
+    <h3 class="card__title">{product.name}</h3>
+    <p class="card__summary">{product.summary}</p>
+
+    {
+      product.series.length > 0 && (
+        <ul class="card__tags">
+          {product.series.map((s) => (
+            <li>{s}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <span class="card__more">
+      View details
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M5 12h14m0 0-6-6m6 6-6 6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </span>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--kb-white);
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--kb-transition), box-shadow var(--kb-transition),
+      transform var(--kb-transition);
+  }
+
+  .card:hover {
+    border-color: color-mix(in srgb, var(--kb-blue) 35%, transparent);
+    box-shadow: var(--kb-shadow);
+    transform: translateY(-3px);
+  }
+
+  .card__media {
+    position: relative;
+    background: var(--kb-grey-50);
+    border-bottom: 1px solid var(--kb-grey-100);
+  }
+
+  .card__media img {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .card__num {
+    position: absolute;
+    top: var(--kb-space-3);
+    left: var(--kb-space-3);
+    padding: 0.15rem 0.5rem;
+    background: var(--kb-blue);
+    color: var(--kb-white);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    border-radius: var(--kb-radius-sm);
+  }
+
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: var(--kb-space-3);
+    padding: var(--kb-space-5);
+  }
+
+  .card__title {
+    font-size: var(--kb-text-lg);
+    transition: color var(--kb-transition);
+  }
+
+  .card:hover .card__title {
+    color: var(--kb-blue);
+  }
+
+  .card__summary {
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+    line-height: 1.6;
+  }
+
+  .card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card__tags li {
+    padding: 0.1rem 0.45rem;
+    background: var(--kb-blue-tint);
+    color: var(--kb-blue);
+    border-radius: var(--kb-radius-sm);
+    font-size: 0.6875rem;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+  }
+
+  .card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: var(--kb-space-2);
+    font-size: var(--kb-text-sm);
+    font-weight: 600;
+    color: var(--kb-blue);
+  }
+
+  .card__more svg {
+    transition: translate var(--kb-transition);
+  }
+
+  .card:hover .card__more svg {
+    translate: 3px 0;
+  }
+</style>

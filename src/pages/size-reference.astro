@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import SizeMatrix from '../components/SizeMatrix.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getSizeReference, getProducts } from '../lib/content';
+
+const size = await getSizeReference();
+const products = await getProducts();
+
+const sleeveProducts = products.filter((p) => p.shaftSizeRange);
+---
+
+<BaseLayout
+  title="Size Reference"
+  description="Plummer block series and shaft size availability at Kaybee International: S, SN, SNA, SNH and MNL series for shaft sizes from 1 inch to 7 inches, with non-standard sizes made to requirement."
+>
+  <PageHero eyebrow="Reference" title={size.heading} lede={size.intro} />
+
+  <section class="kb-section">
+    <div class="kb-container">
+      <SizeMatrix shaftSizes={size.shaftSizes} rows={size.rows} />
+
+      <div class="key">
+        <span class="key__item key__item--yes">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="m5 13 4 4L19 7"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+          Held as ready stock
+        </span>
+        <span class="key__item">
+          <span class="key__dash" aria-hidden="true">&mdash;</span>
+          Not stocked in this size &mdash; ask us, it can usually be made
+        </span>
+      </div>
+
+      {
+        size.footnote && (
+          <aside class="caveat">
+            <h2>Read this before ordering</h2>
+            <p>{size.footnote}</p>
+          </aside>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    sleeveProducts.length > 0 && (
+      <section class="kb-section kb-section--paper">
+        <div class="kb-container">
+          <div class="kb-head">
+            <h2>Shaft size coverage by product</h2>
+            <p class="kb-head__lede">
+              The ranges below are stocked across the same shaft sizes. Series designations apply
+              to housings.
+            </p>
+          </div>
+
+          <ul class="cover">
+            {sleeveProducts.map((p) => (
+              <li>
+                <a href={`/products/${p.slug}`}>
+                  <span class="cover__name">{p.name}</span>
+                  <span class="cover__range">{p.shaftSizeRange}</span>
+                  {p.series.length > 0 && (
+                    <span class="cover__series">{p.series.join(' · ')}</span>
+                  )}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand
+    title="Your size is not on the table?"
+    body="Non-standard sizes are a large part of what we do. Send the shaft diameter, housing dimensions or a photograph of the part you are replacing, and we will tell you what can be supplied."
+  />
+</BaseLayout>
+
+<style>
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kb-space-5);
+    margin-top: var(--kb-space-4);
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+  }
+
+  .key__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .key__item--yes {
+    color: var(--kb-blue);
+    font-weight: 600;
+  }
+
+  .key__dash {
+    color: var(--kb-grey-300);
+    width: 14px;
+    text-align: center;
+  }
+
+  .caveat {
+    margin-top: var(--kb-space-7);
+    padding: var(--kb-space-5) var(--kb-space-6);
+    background: var(--kb-paper);
+    border-left: 3px solid var(--kb-blue);
+    border-radius: var(--kb-radius);
+  }
+
+  .caveat h2 {
+    font-size: var(--kb-text-base);
+    margin-bottom: var(--kb-space-2);
+  }
+
+  .caveat p {
+    font-size: var(--kb-text-sm);
+    color: var(--kb-text-muted);
+    max-width: 78ch;
+    line-height: 1.65;
+  }
+
+  .cover {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+    gap: var(--kb-space-4);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cover a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    height: 100%;
+    padding: var(--kb-space-5);
+    background: var(--kb-white);
+    border: var(--kb-border);
+    border-radius: var(--kb-radius-lg);
+    text-decoration: none;
+    transition: border-color var(--kb-transition), box-shadow var(--kb-transition);
+  }
+
+  .cover a:hover {
+    border-color: color-mix(in srgb, var(--kb-blue) 30%, transparent);
+    box-shadow: var(--kb-shadow-sm);
+  }
+
+  .cover__name {
+    font-weight: 650;
+    color: var(--kb-ink);
+  }
+
+  .cover__range {
+    font-size: var(--kb-text-2xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--kb-blue);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cover__series {
+    font-size: var(--kb-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--kb-text-subtle);
+  }
+</style>

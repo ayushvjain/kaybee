@@ -1,0 +1,7 @@
+name: GEM
+order: 8
+relationship: authorised-distributor
+ranges:
+  - Thrust Bearings
+blurb: Authorised distribution of GEM thrust bearings for axial load applications.
+logo: null
