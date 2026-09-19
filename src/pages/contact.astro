@@ -8,10 +8,29 @@ const company = await getCompany();
 const products = await getProducts();
 
 /**
- * Empty when unset. EnquiryForm renders a clear notice plus direct contact
- * routes rather than a form that would silently drop enquiries.
+ * Web3Forms access keys are UUIDs. Validating the shape (rather than just
+ * checking for a non-empty string) means a leftover placeholder such as
+ * "paste-your-key-here" is treated as unconfigured, instead of rendering a
+ * live-looking form that would fail on every submission.
+ *
+ * When this is empty, EnquiryForm shows a clear notice plus phone, WhatsApp
+ * and email, rather than a form that would silently drop enquiries.
+ *
+ * Note: the contact page is prerendered, so this is read at BUILD time and
+ * baked into the HTML. Changing the key requires a rebuild. That is fine —
+ * Web3Forms access keys are designed to be public and client-visible.
  */
-const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const rawKey = (import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '').trim();
+const accessKey = UUID_RE.test(rawKey) ? rawKey : '';
+
+if (rawKey && !accessKey) {
+  console.warn(
+    `[contact] PUBLIC_WEB3FORMS_KEY is set but is not a valid Web3Forms access key ` +
+      `(expected a UUID, got "${rawKey}"). The enquiry form will show contact ` +
+      `details instead of a form until this is corrected.`
+  );
+}
 
 const waHref = company.mobile
   ? whatsappHref(company.mobile, 'Hello Kaybee International, I have an enquiry about ')

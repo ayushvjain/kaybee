@@ -111,13 +111,44 @@ For local admin testing against GitHub, add a second callback URL:
 
 ### 2. Web3Forms (for the enquiry form)
 
-1. Go to https://web3forms.com and enter `kaybeeint@gmail.com`.
-2. Copy the access key it emails you.
-3. Set it as `PUBLIC_WEB3FORMS_KEY`.
+The code is complete; it only needs the key.
 
-Until this is set, the contact page shows a clear notice plus phone, WhatsApp and
-email links. It deliberately does **not** show a form that would accept enquiries
-and silently lose them.
+1. Go to https://web3forms.com.
+2. Enter **`kaybeeint@gmail.com`** as the address enquiries should arrive at.
+3. Web3Forms emails that address an **access key**, which is a UUID that looks
+   like `a1b2c3d4-e5f6-7890-abcd-ef1234567890`. Check spam if it does not
+   arrive. There is no account or password to manage.
+4. Open **`.env`** in the project root and paste it after the `=`, with no
+   quotes and no spaces:
+
+   ```
+   PUBLIC_WEB3FORMS_KEY=a1b2c3d4-e5f6-7890-abcd-ef1234567890
+   ```
+
+5. Restart `npm run dev`, or run `npm run build`. The key is read at build time,
+   so a running dev server will not pick it up until it restarts.
+6. Open `/contact` and send yourself a test enquiry.
+
+When Cloudflare is connected later, add the same variable there as a **build**
+environment variable and redeploy. A runtime-only secret will not work, because
+the contact page is prerendered and the key is baked in at build time.
+
+#### How the key is handled
+
+`PUBLIC_` is an Astro convention meaning the value is intentionally exposed to
+the browser. That is correct here: Web3Forms access keys are designed to be
+public and are visible in the page source of every site that uses one. Abuse is
+handled by Web3Forms' own spam filtering plus the honeypot field in the form.
+
+Everything else in `.env` is a real secret and must never be given a `PUBLIC_`
+prefix.
+
+The key is validated as a UUID before use, so a leftover placeholder such as
+`paste-your-key-here` is treated as *unconfigured* rather than shipped: the build
+prints a warning, the bad value never reaches the HTML, and the contact page
+keeps showing phone, WhatsApp and email. Until a valid key is set the page
+deliberately does **not** show a form that would accept enquiries and silently
+lose them.
 
 ### 3. Environment variables
 
