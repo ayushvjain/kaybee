@@ -21,3 +21,11 @@ Thumbs.db
 # logs
 *.log
 npm-debug.log*
+
+# screen recordings / stray media dropped in the project folder
+# (a 54MB .mp4 was committed by accident once - keep them out)
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.avi

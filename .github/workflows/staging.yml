@@ -1,0 +1,84 @@
+name: Deploy staging to GitHub Pages
+
+# Staging copy of the site, for review before the real site goes live on
+# Cloudflare at kaybeint.com. It rebuilds on every push to main, so reviewers
+# always see the current state.
+#
+# Two things differ from the production build, both set through the env vars
+# below and read in astro.config.mjs / src/lib/url.ts:
+#   - it is served from a path prefix (/kaybee/) rather than a domain root
+#   - every page carries <meta name="robots" content="noindex, nofollow">
+#
+# The noindex matters: GitHub Pages only honours a robots.txt at the account
+# root, which this repository does not control, so the meta tag is the only
+# thing stopping an unfinished site with placeholder photography from being
+# indexed and competing with kaybeint.com later.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race; a queued run supersedes an in-flight one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build staging site
+        env:
+          PUBLIC_SITE_URL: https://ayushvjain.github.io
+          PUBLIC_BASE_PATH: /kaybee/
+          PUBLIC_STAGING: 'true'
+          # Intentionally unset: with no Web3Forms key the contact page shows
+          # phone, WhatsApp and email instead of a form, so reviewers cannot
+          # send enquiries that would go nowhere.
+          PUBLIC_WEB3FORMS_KEY: ''
+        run: npm run build
+
+      - name: Fail if the staging build is missing its noindex tag
+        # Cheap guard against a refactor silently exposing staging to search
+        # engines. Better to fail the deploy than to get indexed.
+        run: |
+          pages=$(find dist/client/kaybee -name '*.html' | wc -l)
+          tagged=$(grep -rl 'name="robots" content="noindex, nofollow"' dist/client/kaybee --include='*.html' | wc -l)
+          echo "html pages: $pages, with noindex: $tagged"
+          if [ "$pages" -eq 0 ] || [ "$pages" -ne "$tagged" ]; then
+            echo "::error::Expected every staging page to carry a noindex tag."
+            exit 1
+          fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          # Astro nests output under the base path, so this directory - not
+          # dist/client - is what Pages should serve at /kaybee/.
+          path: dist/client/kaybee
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

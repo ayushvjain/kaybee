@@ -1,5 +1,6 @@
 ---
 import { getCompany, getProducts, telHref, whatsappHref } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const company = await getCompany();
 const products = await getProducts();
@@ -11,7 +12,7 @@ const year = new Date().getFullYear();
     <div class="ftr__brand">
       <img
         class="ftr__logo"
-        src="/brand/kaybee-logo-horizontal.svg"
+        src={withBase("/brand/kaybee-logo-horizontal.svg")}
         alt="Kaybee International"
         width="172"
         height="53"
@@ -25,7 +26,7 @@ const year = new Date().getFullYear();
         {
           products.map((p) => (
             <li>
-              <a href={`/products/${p.slug}`}>{p.name}</a>
+              <a href={withBase(`/products/${p.slug}`)}>{p.name}</a>
             </li>
           ))
         }
@@ -35,11 +36,11 @@ const year = new Date().getFullYear();
     <div class="ftr__col">
       <h2 class="ftr__heading">Company</h2>
       <ul class="ftr__list">
-        <li><a href="/about">About Us</a></li>
-        <li><a href="/brands">Brands</a></li>
-        <li><a href="/size-reference">Size Reference</a></li>
-        <li><a href="/downloads">Downloads</a></li>
-        <li><a href="/contact">Contact</a></li>
+        <li><a href={withBase("/about")}>About Us</a></li>
+        <li><a href={withBase("/brands")}>Brands</a></li>
+        <li><a href={withBase("/size-reference")}>Size Reference</a></li>
+        <li><a href={withBase("/downloads")}>Downloads</a></li>
+        <li><a href={withBase("/contact")}>Contact</a></li>
       </ul>
     </div>
 

@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getDownloads, getCompany, mailtoHref } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const downloads = await getDownloads();
 const company = await getCompany();
@@ -43,7 +44,7 @@ const company = await getCompany();
                 </div>
 
                 {d.file && (
-                  <a class="kb-btn kb-btn--primary dl__btn" href={d.file} download>
+                  <a class="kb-btn kb-btn--primary dl__btn" href={withBase(d.file)} download>
                     Download
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                       <path
@@ -72,7 +73,7 @@ const company = await getCompany();
               current availability.
             </p>
             <div class="empty__actions">
-              <a class="kb-btn kb-btn--primary" href="/contact#enquiry">Request details</a>
+              <a class="kb-btn kb-btn--primary" href={withBase("/contact#enquiry")}>Request details</a>
               {company.email && (
                 <a
                   class="kb-btn kb-btn--ghost"
@@ -89,9 +90,9 @@ const company = await getCompany();
       <div class="alt">
         <h2 class="alt__title">Prefer to browse online?</h2>
         <ul>
-          <li><a href="/products">Full product range</a></li>
-          <li><a href="/size-reference">Series and shaft size reference</a></li>
-          <li><a href="/brands">Brands and what each supplies</a></li>
+          <li><a href={withBase("/products")}>Full product range</a></li>
+          <li><a href={withBase("/size-reference")}>Series and shaft size reference</a></li>
+          <li><a href={withBase("/brands")}>Brands and what each supplies</a></li>
         </ul>
       </div>
     </div>

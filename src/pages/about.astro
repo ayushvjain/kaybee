@@ -5,6 +5,7 @@ import SectionLabel from '../components/SectionLabel.astro';
 import Watermark from '../components/Watermark.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getAbout, getBrands, getHomepage, RELATIONSHIP_LABEL } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const about = await getAbout();
 const brands = await getBrands();
@@ -101,7 +102,7 @@ const otherBrands = brands.filter(
         )
       }
 
-      <a class="kb-btn kb-btn--ghost dtab__link" href="/brands">See all brands in detail</a>
+      <a class="kb-btn kb-btn--ghost dtab__link" href={withBase("/brands")}>See all brands in detail</a>
     </div>
   </section>
 
@@ -117,7 +118,7 @@ const otherBrands = brands.filter(
           </div>
           <div class="split__body">
             <p>{about.custom}</p>
-            <a class="kb-btn kb-btn--primary" href="/contact#enquiry">
+            <a class="kb-btn kb-btn--primary" href={withBase("/contact#enquiry")}>
               Discuss a non-standard size
             </a>
           </div>

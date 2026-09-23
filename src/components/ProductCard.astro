@@ -1,6 +1,7 @@
 ---
 import ImagePlaceholder from './ImagePlaceholder.astro';
 import type { Product } from '../lib/content';
+import { withBase } from '../lib/url';
 
 interface Props {
   product: Product;
@@ -11,11 +12,11 @@ const { product, index } = Astro.props;
 const hero = product.images[0];
 ---
 
-<a class="card" href={`/products/${product.slug}`}>
+<a class="card" href={withBase(`/products/${product.slug}`)}>
   <div class="card__media">
     {
       hero?.file ? (
-        <img src={hero.file} alt={hero.alt} loading="lazy" decoding="async" width="640" height="480" />
+        <img src={withBase(hero.file)} alt={hero.alt} loading="lazy" decoding="async" width="640" height="480" />
       ) : (
         <ImagePlaceholder label={product.name} ratio="4 / 3" />
       )

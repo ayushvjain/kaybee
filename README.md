@@ -38,6 +38,53 @@ footer, contact page and search-engine structured data together.
 
 ---
 
+## Staging site
+
+A permanent staging copy is published to GitHub Pages for review before the real
+site goes live:
+
+**https://ayushvjain.github.io/kaybee/**
+
+It rebuilds automatically on every push to `main`
+(`.github/workflows/staging.yml`), so reviewers always see the current state.
+Nothing about it touches Cloudflare or `kaybeint.com`.
+
+Two deliberate differences from production:
+
+- **It is served from a path prefix** (`/kaybee/`) rather than a domain root.
+  This is why internal links and CMS image paths go through `withBase()` in
+  `src/lib/url.ts` instead of being written as plain `/about` strings. At the
+  root deployment that helper is a no-op, so production is unaffected.
+- **Every page carries `<meta name="robots" content="noindex, nofollow">`.**
+  A `robots.txt` would not work here: GitHub Pages only honours one at the
+  account root, which this repository does not control. The meta tag is the
+  only thing preventing an unfinished site with placeholder photography from
+  being indexed and competing with `kaybeint.com` later. The workflow fails the
+  deploy if any page is missing it.
+
+The staging build also has **no Web3Forms key**, so the contact page shows
+phone, WhatsApp and email rather than a form. That is intentional: a reviewer
+should not be able to send an enquiry that goes nowhere.
+
+The `/keystatic` admin does **not** work on staging, because GitHub Pages serves
+static files only and the admin needs server routes. Edit content locally with
+`npm run dev`, or on the live Cloudflare site once it exists.
+
+To build the staging output locally:
+
+```bash
+PUBLIC_SITE_URL=https://ayushvjain.github.io PUBLIC_BASE_PATH=/kaybee/ PUBLIC_STAGING=true npm run build
+```
+
+On Windows, run this in PowerShell rather than Git Bash — Git Bash rewrites
+`/kaybee/` into a Windows path and the build fails:
+
+```powershell
+$env:PUBLIC_SITE_URL="https://ayushvjain.github.io"; $env:PUBLIC_BASE_PATH="/kaybee/"; $env:PUBLIC_STAGING="true"; npm run build
+```
+
+Output lands in `dist/client/kaybee/`, not `dist/client/`.
+
 ## Local development
 
 Requires Node 22 or newer.

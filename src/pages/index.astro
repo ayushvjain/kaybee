@@ -6,6 +6,7 @@ import ImagePlaceholder from '../components/ImagePlaceholder.astro';
 import Watermark from '../components/Watermark.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getHomepage, getProducts, getBrands, RELATIONSHIP_LABEL } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const home = await getHomepage();
 const products = await getProducts();
@@ -27,8 +28,8 @@ const distributorCount = brands.filter((b) => b.relationship === 'authorised-dis
         <h1>{home.heroHeadline}</h1>
         <p class="hero__sub">{home.heroSubhead}</p>
         <div class="hero__actions">
-          <a class="kb-btn kb-btn--on-blue" href="/products">Browse products</a>
-          <a class="kb-btn kb-btn--outline-light" href="/contact#enquiry">Send an enquiry</a>
+          <a class="kb-btn kb-btn--on-blue" href={withBase("/products")}>Browse products</a>
+          <a class="kb-btn kb-btn--outline-light" href={withBase("/contact#enquiry")}>Send an enquiry</a>
         </div>
       </div>
 
@@ -36,7 +37,7 @@ const distributorCount = brands.filter((b) => b.relationship === 'authorised-dis
         {
           home.heroImage.file ? (
             <img
-              src={home.heroImage.file}
+              src={withBase(home.heroImage.file)}
               alt={home.heroImage.alt}
               width="720"
               height="560"
@@ -132,7 +133,7 @@ const distributorCount = brands.filter((b) => b.relationship === 'authorised-dis
         }
       </ul>
 
-      <a class="kb-btn kb-btn--ghost bband__link" href="/brands">
+      <a class="kb-btn kb-btn--ghost bband__link" href={withBase("/brands")}>
         See what each brand supplies
       </a>
     </div>
@@ -150,7 +151,7 @@ const distributorCount = brands.filter((b) => b.relationship === 'authorised-dis
           </div>
           <div class="custom__body">
             <p>{home.customWorkBody}</p>
-            <a class="kb-btn kb-btn--primary" href="/contact#enquiry">
+            <a class="kb-btn kb-btn--primary" href={withBase("/contact#enquiry")}>
               Discuss a custom requirement
             </a>
           </div>

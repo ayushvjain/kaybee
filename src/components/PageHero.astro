@@ -1,5 +1,6 @@
 ---
 import Watermark from './Watermark.astro';
+import { withBase } from '../lib/url';
 
 interface Props {
   eyebrow?: string;
@@ -17,11 +18,11 @@ const { eyebrow, title, lede, crumbs = [] } = Astro.props;
   <div class="kb-container phero__inner">
     <nav class="phero__crumbs" aria-label="Breadcrumb">
       <ol>
-        <li><a href="/">Home</a></li>
+        <li><a href={withBase("/")}>Home</a></li>
         {
           crumbs.map((c) => (
             <li>
-              <a href={c.href}>{c.label}</a>
+              <a href={withBase(c.href)}>{c.label}</a>
             </li>
           ))
         }

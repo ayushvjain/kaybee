@@ -1,5 +1,6 @@
 ---
 import { getCompany, telHref } from '../lib/content';
+import { withBase, logicalPath } from '../lib/url';
 
 const company = await getCompany();
 const primaryPhone = company.landlines[0] ?? company.mobile;
@@ -14,7 +15,7 @@ const NAV = [
   { href: '/contact', label: 'Contact' },
 ];
 
-const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const path = logicalPath(Astro.url.pathname);
 const isCurrent = (href: string) =>
   href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
 ---
@@ -43,9 +44,9 @@ const isCurrent = (href: string) =>
 
   <div class="hdr__main">
     <div class="kb-container hdr__inner">
-      <a class="hdr__logo" href="/" aria-label="Kaybee International, home">
+      <a class="hdr__logo" href={withBase("/")} aria-label="Kaybee International, home">
         <img
-          src="/brand/kaybee-logo-horizontal.svg"
+          src={withBase("/brand/kaybee-logo-horizontal.svg")}
           alt="Kaybee International"
           width="172"
           height="53"
@@ -58,7 +59,7 @@ const isCurrent = (href: string) =>
             NAV.map((item) => (
               <li>
                 <a
-                  href={item.href}
+                  href={withBase(item.href)}
                   class="hdr__link"
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
                 >
@@ -71,7 +72,7 @@ const isCurrent = (href: string) =>
       </nav>
 
       <div class="hdr__actions">
-        <a class="kb-btn kb-btn--primary hdr__cta" href="/contact#enquiry">Send Enquiry</a>
+        <a class="kb-btn kb-btn--primary hdr__cta" href={withBase("/contact#enquiry")}>Send Enquiry</a>
         <button
           class="hdr__toggle"
           type="button"
@@ -92,7 +93,7 @@ const isCurrent = (href: string) =>
         {
           NAV.map((item, i) => (
             <li>
-              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              <a href={withBase(item.href)} aria-current={isCurrent(item.href) ? 'page' : undefined}>
                 <span class="hdr__panel-num">{String(i + 1).padStart(2, '0')}</span>
                 {item.label}
               </a>

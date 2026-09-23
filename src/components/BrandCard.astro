@@ -1,5 +1,6 @@
 ---
 import { RELATIONSHIP_LABEL, type Brand } from '../lib/content';
+import { withBase } from '../lib/url';
 
 interface Props {
   brand: Brand;
@@ -13,7 +14,7 @@ const label = RELATIONSHIP_LABEL[brand.relationship];
   <div class="bcard__head">
     {
       brand.logo ? (
-        <img class="bcard__logo" src={brand.logo} alt={`${brand.name} logo`} loading="lazy" />
+        <img class="bcard__logo" src={withBase(brand.logo)} alt={`${brand.name} logo`} loading="lazy" />
       ) : (
         /*
          * Most brands have no logo asset supplied, so the wordmark is set

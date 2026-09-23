@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import SizeMatrix from '../components/SizeMatrix.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getSizeReference, getProducts } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const size = await getSizeReference();
 const products = await getProducts();
@@ -65,7 +66,7 @@ const sleeveProducts = products.filter((p) => p.shaftSizeRange);
           <ul class="cover">
             {sleeveProducts.map((p) => (
               <li>
-                <a href={`/products/${p.slug}`}>
+                <a href={withBase(`/products/${p.slug}`)}>
                   <span class="cover__name">{p.name}</span>
                   <span class="cover__range">{p.shaftSizeRange}</span>
                   {p.series.length > 0 && (

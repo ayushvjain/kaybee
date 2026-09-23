@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Watermark from '../components/Watermark.astro';
 import { getProducts } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const products = await getProducts();
 ---
@@ -21,10 +22,10 @@ const products = await getProducts();
       </p>
 
       <ul class="nf__links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/products">Products</a></li>
-        <li><a href="/size-reference">Size reference</a></li>
-        <li><a href="/contact">Contact us</a></li>
+        <li><a href={withBase("/")}>Home</a></li>
+        <li><a href={withBase("/products")}>Products</a></li>
+        <li><a href={withBase("/size-reference")}>Size reference</a></li>
+        <li><a href={withBase("/contact")}>Contact us</a></li>
       </ul>
 
       <div class="nf__products">
@@ -33,7 +34,7 @@ const products = await getProducts();
           {
             products.map((p) => (
               <li>
-                <a href={`/products/${p.slug}`}>{p.name}</a>
+                <a href={withBase(`/products/${p.slug}`)}>{p.name}</a>
               </li>
             ))
           }

@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getCompany } from '../lib/content';
+import { withBase, absoluteUrl, SITE_URL, IS_STAGING } from '../lib/url';
 
 interface Props {
   title: string;
@@ -18,17 +19,17 @@ const company = await getCompany();
 
 const SITE_NAME = 'Kaybee International';
 const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://kaybeint.com');
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE_URL);
 // Must be a raster format: Facebook, LinkedIn, WhatsApp and X do not render SVG.
-const ogImage = new URL('/brand/og-image.png', Astro.site ?? 'https://kaybeint.com');
+const ogImage = absoluteUrl('/brand/og-image.png');
 
 const localBusiness = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
-  '@id': 'https://kaybeint.com/#organisation',
+  '@id': `${SITE_URL}/#organisation`,
   name: company.legalName,
   description: company.tagline,
-  url: 'https://kaybeint.com',
+  url: SITE_URL,
   email: company.email,
   telephone: [...company.landlines, company.mobile].filter(Boolean),
   address: {
@@ -41,7 +42,7 @@ const localBusiness = {
   },
   areaServed: { '@type': 'Country', name: 'India' },
   foundingDate: '1975',
-  logo: new URL('/brand/kaybee-logo.svg', Astro.site ?? 'https://kaybeint.com').href,
+  logo: absoluteUrl('/brand/kaybee-logo.svg'),
   ...(company.hours ? { openingHours: company.hours } : {}),
 };
 ---
@@ -60,20 +61,29 @@ const localBusiness = {
     <meta property="og:description" content={description} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical.href} />
-    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image" content={ogImage} />
     <meta property="og:locale" content="en_IN" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage.href} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {
+      /*
+       * The staging copy must never be indexed. A robots.txt would not help:
+       * GitHub Pages only honours one at the account root, which we do not
+       * control, so this meta tag is the actual protection.
+       */
+      IS_STAGING && <meta name="robots" content="noindex, nofollow" />
+    }
 
     <meta name="theme-color" content="#0054a6" />
     <meta name="geo.region" content="IN-TN" />
     <meta name="geo.placename" content="Chennai" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/brand/kaybee-monogram.svg" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={withBase('/brand/kaybee-monogram.svg')} />
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
 
     <script type="application/ld+json" set:html={JSON.stringify(localBusiness)} is:inline />
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />}

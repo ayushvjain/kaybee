@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import BrandCard from '../components/BrandCard.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { getBrands, getProducts, RELATIONSHIP_LABEL } from '../lib/content';
+import { withBase } from '../lib/url';
 
 const brands = await getBrands();
 const products = await getProducts();
@@ -74,7 +75,7 @@ const matrix = products.map((p) => ({
               matrix.map((row) => (
                 <tr>
                   <th scope="row">
-                    <a href={`/products/${row.slug}`}>{row.name}</a>
+                    <a href={withBase(`/products/${row.slug}`)}>{row.name}</a>
                   </th>
                   <td>
                     {row.brands.length > 0 ? (

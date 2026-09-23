@@ -15,8 +15,20 @@ import keystatic from '@keystatic/astro';
  */
 const isDev = process.argv.includes('dev');
 
+/*
+ * Deployment target.
+ *
+ * Production runs at the root of kaybeint.com. The staging copy runs at
+ * ayushvjain.github.io/kaybee/, which needs a path prefix. Both are driven by
+ * environment variables so the same source builds either one - see
+ * .github/workflows/staging.yml.
+ */
+const site = process.env.PUBLIC_SITE_URL || 'https://kaybeint.com';
+const base = process.env.PUBLIC_BASE_PATH || '/';
+
 export default defineConfig({
-  site: 'https://kaybeint.com',
+  site,
+  base,
   adapter: isDev
     ? node({ mode: 'standalone' })
     : cloudflare({

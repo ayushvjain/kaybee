@@ -4,6 +4,7 @@ import PageHero from '../../components/PageHero.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { getProducts } from '../../lib/content';
+import { withBase, absoluteUrl } from '../../lib/url';
 
 const products = await getProducts();
 
@@ -15,7 +16,7 @@ const schema = {
     '@type': 'ListItem',
     position: i + 1,
     name: p.name,
-    url: `https://kaybeint.com/products/${p.slug}`,
+    url: absoluteUrl(`/products/${p.slug}`),
   })),
 };
 ---
@@ -44,7 +45,7 @@ const schema = {
           replacement and retrofit work where the original part is no longer available. Send us
           the dimensions and we will tell you what is possible.
         </p>
-        <a class="kb-btn kb-btn--ghost" href="/contact#enquiry">Ask about a non-standard size</a>
+        <a class="kb-btn kb-btn--ghost" href={withBase("/contact#enquiry")}>Ask about a non-standard size</a>
       </aside>
     </div>
   </section>
